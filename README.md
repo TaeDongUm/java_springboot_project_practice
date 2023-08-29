@@ -3,7 +3,7 @@
 # java_springboot_project_practice
 
 
-## 1. 프로젝트 환경설정
+## 1. 프로젝트 환경설정 (진행 중)
 spring에서 운영하는 사이트로, spring boot 기반으로 프로젝트를 만들어주는 사이트
 
 [spring initializer](https://start.spring.io/) ![](./images/1-1.png)
