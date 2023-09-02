@@ -40,6 +40,13 @@ spring에서 운영하는 사이트로, spring boot 기반으로 프로젝트를
 - 어떤 라이브러리를 이용할 것인가 정하는 것
   
 - 웹 프로젝트라면 Spring web 검색해서 추가
+
+
+**Generate**
+
+- zip 파일이 다운되고 이를 Intellij에서 import하면 된다.
+
+
   
 
 Maven 이란
