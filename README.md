@@ -44,7 +44,7 @@ spring에서 운영하는 사이트로, spring boot 기반으로 프로젝트를
 
 **Generate**
 
-- zip 파일이 다운되고 이를 Intellij에서 import하면 된다.
+- zip 파일이 다운되고 이를 Intellij에서 import하면 된다. <br><br>
 
 
   
