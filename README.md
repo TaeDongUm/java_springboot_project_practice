@@ -3,7 +3,8 @@
 # java_springboot_project_practice
 
 
-## 1. 프로젝트 환경설정 (진행 중)
+## 1. 프로젝트 환경설정 (진행 중) <br>
+### 1-1. 프로젝트 생성
 spring에서 운영하는 사이트로, spring boot 기반으로 프로젝트를 만들어주는 사이트
 
 [spring initializer](https://start.spring.io/) ![](./images/1-1.png)
@@ -163,6 +164,9 @@ Gradle을 쓰는 이유
   - Intellij 로 바꾸면 Intellij에서 자바를 바로 실행시켜서 좀 더 빠르다.
  
 <p align="center"><img src="./images/1-17.png"></p>
+<br><br>
+
+### 1-2 라이브러리 살펴보기
 
 
 
