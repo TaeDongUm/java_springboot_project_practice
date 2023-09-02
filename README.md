@@ -64,7 +64,7 @@ Gradle을 쓰는 이유
 
 레거시 프로젝트, 과거 프로젝트의 경우 Maven으로 남아있는게 있지만, 요즘은 Gradle로 넘어가는 추세이다.
 
-<p align="center">![](./images/1-3.png)</p> 
+<p align="center"><img src="./images/1-3.png"></p>
 
 - java 밑에 패키지와 소스파일이 있음
   
@@ -85,52 +85,52 @@ Gradle을 쓰는 이유
   - SDK 17로 설정
     
   - Language level: SDK default
-   <p align="center"> ![](./images/1-4.png)</p>
+<p align="center"><img src="./images/1-4.png"></p>
     
 ### 2. Modules
   
   - Language level 변경
-   <p align="center"> ![](./images/1-5.png)</p>
+<p align="center"><img src="./images/1-5.png"></p>
     
 ### 3. SDKs 설정
   
   - 원하는 JDK 설정  
-    <p align="center">![](./images/1-6.png)</p>
+<p align="center"><img src="./images/1-6.png"></p>
   
 ### 4. Project Setting (단축키 Ctrl + Alt + S)
   
   - Build,Execution,Deployment  -> Build Tools -> Gradle
     
   - Gradle JVM 변경
-   <p align="center"> ![](./images/1-7.png)</p>
+<p align="center"><img src="./images/1-7.png"></p>
     
   - Build,Execution,Deployment  -> Compiler -> Java Compiler
     
   - Project bytecode version 변경  
-   <p align="center"> ![](./images/1-8.png)</p>
+<p align="center"><img src="./images/1-8.png"></p>
   
 ### 5. OS JDK 환경변수 설정 다시하기
   
-  <p align="center"> ![](./images/1-9.png) </p>
-  <p align="center">![](./images/1-10.png)</p>
+<p align="center"><img src="./images/1-9.png"></p>
+<p align="center"><img src="./images/1-10.png"></p>
   
 
 ## 수행 결과
 
-<p align="center">![](./images/1-11.png)</p>
+<p align="center"><img src="./images/1-11.png"></p>
 
 - 여기서,
   
-  <p align="center">![](./images/1-12.png)</p>
+<p align="center"><img src="./images/1-12.png"></p>
   
-  <p align="center">![](./images/1-13.png)</p>
+<p align="center"><img src="./images/1-13.png"></p>
   
-  <p align="center">![](./images/1-14.png)</p>
+<p align="center"><img src="./images/1-14.png"></p>
   
   - Stop하면
     
   
-  <p align="center">![](./images/1-15.png)</p>
+<p align="center"><img src="./images/1-15.png"></p>
   
 - 동작원리
   
@@ -155,7 +155,7 @@ Gradle을 쓰는 이유
     
   - Intellij 로 바꾸면 Intellij에서 자바를 바로 실행시켜서 좀 더 빠르다.
  
-    <p align="center">![](./images/1-17.png)</p>
+<p align="center"><img src="./images/1-17.png"></p>
 
 
 
