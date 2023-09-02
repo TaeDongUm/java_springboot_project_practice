@@ -69,7 +69,7 @@ Gradle 이란
 
 Gradle을 쓰는 이유
 
-레거시 프로젝트, 과거 프로젝트의 경우 Maven으로 남아있는게 있지만, 요즘은 Gradle로 넘어가는 추세이다.
+레거시 프로젝트, 과거 프로젝트의 경우 Maven으로 남아있는게 있지만, 요즘은 Gradle로 넘어가는 추세이다.<br><br><br>
 
 <p align="center"><img src="./images/1-3.png"></p>
 
