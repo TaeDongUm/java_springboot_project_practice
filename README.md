@@ -60,9 +60,104 @@ Gradle 이란
 - 장점으로는 스크립트 언어로 구성되어서 XML과 달리 변수 선언, if, else, for등의 로직이 구현가능하여 간결하게 코드 작성이 가능하다.
   
 
-Gradle을 쓰는 이유(진행 중)
+Gradle을 쓰는 이유
 
 레거시 프로젝트, 과거 프로젝트의 경우 Maven으로 남아있는게 있지만, 요즘은 Gradle로 넘어가는 추세이다.
+
+![](./images/1-3.png) 
+
+- java 밑에 패키지와 소스파일이 있음
+  
+- test는 테스트 코드와 관련된 파일들이 들어가 있음
+  
+  - 요즘 개발 트렌드에서는 테스트코드가 중요하다는 것을 의미
+    
+- resource 파일은 java 코드 파일을 제외한 xml 이나 설정 파일들이 들어가 있음
+
+## [IntelliJ] Java 버전 바꾸는 법(JDK 버전)
+**<u>오류사항 발생</u>**
+- No matching variant of org.springframework.boot:spring-boot-gradle-plugin:3.1.3 was found. The consumer was configured to find a library for use during runtime, compatible with Java 8, packaged as a jar, and its dependencies declared externally, as well as attribute 'org.gradle.plugin.api-version' with value '8.2.1' but:
+
+1. Project(단축키 Crtl + Shift + Alt + S)
+  
+  - 스프링 부트 3버전 대부터는 JDK 17부터 지원하기 때문에 jdk 1.8(java8)로 빌드하려고 할 때 발생하는 오류
+    
+  - SDK 17로 설정
+    
+  - Language level: SDK default
+    ![](./images/1-4.png)
+    
+2. Modules
+  
+  - Language level 변경
+    ![](./images/1-5.png)
+    
+3. SDKs 설정
+  
+  - 원하는 JDK 설정  
+    ![](./images/1-6.png)
+  
+4. Project Setting (단축키 Ctrl + Alt + S)
+  
+  - Build,Execution,Deployment  -> Build Tools -> Gradle
+    
+  - Gradle JVM 변경
+    ![](./images/1-7.png)
+    
+  - Build,Execution,Deployment  -> Compiler -> Java Compiler
+    
+  - Project bytecode version 변경  
+    ![](./images/1-8.png)
+  
+5. OS JDK 환경변수 설정 다시하기
+  
+  ![](./images/1-9.png)
+  ![](./images/1-10.png)
+  
+
+## 수행 결과
+
+![](./images/1-11.png)
+
+- 여기서,
+  
+  ![](./images/1-12.png)
+  
+  ![](./images/1-13.png)
+  
+  ![](./images/1-14.png)
+  
+  - Stop하면
+    
+  
+  ![](./images/1-15.png)
+  
+- 동작원리
+  
+   ```java
+    @SpringBootApplication
+    public class HelloSpringApplication {
+    
+    	public static void main(String[] args) {
+    		SpringApplication.run(HelloSpringApplication.class, args);
+    	}
+    
+    }
+   ```
+    
+  - SpringApplication.run 안에 HelloSpringApplicatin이라는 클래스를 넣어주면 @SpringBootApplication 어노테이션을 통해서 springboot 어플리케이션이 실행이 된다.
+    
+  - Tomcat을 내장하고 있는데 자체적으로 서버를 띄움
+    
+- 번외
+  
+  - 인텔리제이가 자바를 실행하면 직접 실행하는 것이 아니라 Gradle을 통해서 실행하게 되는데 Gradle을 통해서 실행하게 되면 느릴 때가 있음
+    
+  - Intellij 로 바꾸면 Intellij에서 자바를 바로 실행시켜서 좀 더 빠르다.
+ 
+    ![](./images/1-17.png)
+
+
 
 ## 2. 스프링 웹 개발 기초
 
