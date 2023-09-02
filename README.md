@@ -78,7 +78,7 @@ Gradle을 쓰는 이유
 **<u>오류사항 발생</u>**
 - No matching variant of org.springframework.boot:spring-boot-gradle-plugin:3.1.3 was found. The consumer was configured to find a library for use during runtime, compatible with Java 8, packaged as a jar, and its dependencies declared externally, as well as attribute 'org.gradle.plugin.api-version' with value '8.2.1' but:
 
-1. Project(단축키 Crtl + Shift + Alt + S)
+### 1. Project(단축키 Crtl + Shift + Alt + S)
   
   - 스프링 부트 3버전 대부터는 JDK 17부터 지원하기 때문에 jdk 1.8(java8)로 빌드하려고 할 때 발생하는 오류
     
@@ -87,17 +87,17 @@ Gradle을 쓰는 이유
   - Language level: SDK default
     ![](./images/1-4.png)
     
-2. Modules
+### 2. Modules
   
   - Language level 변경
     ![](./images/1-5.png)
     
-3. SDKs 설정
+### 3. SDKs 설정
   
   - 원하는 JDK 설정  
     ![](./images/1-6.png)
   
-4. Project Setting (단축키 Ctrl + Alt + S)
+### 4. Project Setting (단축키 Ctrl + Alt + S)
   
   - Build,Execution,Deployment  -> Build Tools -> Gradle
     
@@ -109,7 +109,7 @@ Gradle을 쓰는 이유
   - Project bytecode version 변경  
     ![](./images/1-8.png)
   
-5. OS JDK 환경변수 설정 다시하기
+### 5. OS JDK 환경변수 설정 다시하기
   
   ![](./images/1-9.png)
   ![](./images/1-10.png)
