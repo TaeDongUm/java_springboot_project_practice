@@ -3,7 +3,7 @@
 # java_springboot_project_practice
 
 <details>
-<summary>## 1. 프로젝트 환경설정</summary>
+<summary>1. 프로젝트 환경설정 (정리 완)</summary>
 <div markdown="1">
 
 ## 1. 프로젝트 환경설정 <br>
@@ -405,16 +405,46 @@ public class HelloController {
 </div>
 </details>
   
+<details>
+<summary>2. 스프링 웹 개발 기초</summary>
+<div markdown="1">
 
-## 2. 스프링 웹 개발 기초
+</div>
+</details>
 
-## 3. 회원 관리 예제 - 백엔드 개발
+<details>
+<summary>3. 회원 관리 예제 - 백엔드 개발</summary>
+<div markdown="1">
 
-## 4. 스프링 빈과 의존관계
+</div>
+</details>
 
-## 5. 회원관리 예제 - 웹 MVC 개발
+<details>
+<summary>4. 스프링 빈과 의존관계</summary>
+<div markdown="1">
 
-## 6. 스프링 DB 접근 기술
+</div>
+</details>
 
-## 7. AOP
+<details>
+<summary>5. 회원관리 예제 - 웹 MVC 개발</summary>
+<div markdown="1">
+
+</div>
+</details>
+
+<details>
+<summary>6. 스프링 DB 접근 기술</summary>
+<div markdown="1">
+
+</div>
+</details>
+
+<details>
+<summary>7. AOP</summary>
+<div markdown="1">
+
+</div>
+</details>
+  
 
