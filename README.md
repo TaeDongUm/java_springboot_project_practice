@@ -2,8 +2,11 @@
 
 # java_springboot_project_practice
 
+<details>
+<summary>## 1. 프로젝트 환경설정</summary>
+<div markdown="1">
 
-## 1. 프로젝트 환경설정 (진행 중) <br>
+## 1. 프로젝트 환경설정 <br>
 ### 1-1. 프로젝트 생성
 spring에서 운영하는 사이트로, spring boot 기반으로 프로젝트를 만들어주는 사이트
 
@@ -398,6 +401,9 @@ public class HelloController {
 - 참고사항
   
   - `spring-boot-devtools` 라이브러리를 추가하면 `html` 파일을 컴파일만 해주면 서버 재시작 없이 view 파일 변경이 가능하다.
+ 
+</div>
+</details>
   
 
 ## 2. 스프링 웹 개발 기초
