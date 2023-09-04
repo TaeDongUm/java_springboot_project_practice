@@ -1,4 +1,4 @@
-## 출처: 인프런의 [강의](https://www.inflearn.com/course/%EC%8A%A4%ED%94%84%EB%A7%81-%EC%9E%85%EB%AC%B8-%EC%8A%A4%ED%94%84%EB%A7%81%EB%B6%80%ED%8A%B8) 를 바탕으로 공부한 것을 기록하는 repo입니다!
+## 출처: 인프런의 [김영한님 강의](https://www.inflearn.com/course/%EC%8A%A4%ED%94%84%EB%A7%81-%EC%9E%85%EB%AC%B8-%EC%8A%A4%ED%94%84%EB%A7%81%EB%B6%80%ED%8A%B8) 를 바탕으로 공부한 것을 기록하는 repo입니다!
 
 # java_springboot_project_practice
 
@@ -167,8 +167,221 @@ Gradle을 쓰는 이유
 <br><br>
 
 ### 1-2 라이브러리 살펴보기
+<br>
+<p align="center"><img src="./images/1-18.png"></p> <br>
+땡겨온 라이브러리 spring-web, thymeleaf는 각각 또다른 라이브러리에 의존하고 있음 <br>
+의존하는 라이브러리까지 다 땡겨와서 이용하게 된다. <br>
 
+##### Spring Boot 라이브러리
+- spring-boot-starter-web 대표적으로
+  
+  - spring-boot-server-tomcat
+    
+  - spring-webmvc
+    
+- spring-boot-starter-thymeleaf는 html을 렌더링해주는 라이브러리 <br>
+<p align="center"><img src="./images/1-19.png"></p>
+<br>
+- spring-boot-starter
+  
+  - spring-boot
+    
+  - autoconfigure
+    
+  - logging
+    
+  - core 관련한 라이브러리가 들어있음
+    
+- spring-boot-starter-logging
+  
+  - logback(실제 log를 어떤 구현체로 실행할 것인지), slf4j(인터페이스)가 들어있다
+- log와 관련한 내용
+  
+  - 현업에 있는 개발자들은 System.out.println으로 거의 출력하지 않는다.
+    
+  - log로 출력을 해야 한다.
+    
+  - log로 남겨야 심각한 에러들을 따로 파일로 모아서 관리가 가능하기 때문
+    
+  - 취준이나 신입들은 log를 왜 쓰지라고 생각할 수 있음.
+    
+- spring-boot-starter-test
+  
+  - junit (테스트 프레임워크)
+    
+  - mockito (mock 라이브러리)
+    
+  - assertj (테스트 코드 편하게 작성하게 도와주는 라이브러리)
+    
+  - spring-test (스프링 통합 테스트)
+  <br>
+  ### 1-3 View 환경설정
+  <br>
+  <p align="center"><img src="./images/1-20.png"></p>
+  <br>
+  [spring-boot-docs](https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#web.servlet.spring-mvc.welcome-page) 공식문서에서 내용을 찾을 수 있음
 
+- main/resources/static 폴더 내에 index.html 파일을 만들어서 넣으면 Welcome page 기능을 제공한다.
+<br>
+- ```html
+  <!DOCTYPE HTML>
+  <html>
+  <head>
+      <title>Hello</title>
+      <meta http-equiv="Content=Type" content="text/html; charset=UTF-8" />
+  </head>
+  <body>
+  Hello
+  <a href = "/hello">hello</a>
+  </body>
+  </html>
+  ```
+  <br>
+- 단순히 파일을 서버에 던져준 것 밖에 안됨
+  
+- 템플릿 엔진이라는 것을 쓰면 모양을 바꿀 수 있다.
+  
+- 공식 사이트
+  
+  - [thymeleaf.org](https://www.thymeleaf.org/)
+    
+  - [스프링 공식 튜토리얼](https://spring.io/guides/gs/serving-web-content/)
+    
+  - [스프링 부트 메뉴얼](https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/)
+    
+
+- spring-boot-starter-thymeleaf가 위 html 파일을 꾸며주는 역할
+  
+- spring boot 메뉴얼 사이트에서도 지원하는 기능으로 thymeleaf가 있는 것을 확인할 수 있다.
+<br>
+<p align="center"><img src="./images/1-21.png"></p>
+<br>
+
+```java
+pacakage hello.hellospring;
+
+import...
+
+@SpringBootApplication
+public class HelloSpringApplication{
+    pubilc static void main(String[] args){
+        SpringApplication.run(HelloSpringApplication.class, args);
+    }
+}
+```
+<br>
+
+##### 화면 구성을 위한 작업
+
+- Web Application에서 첫 진입이 Controller
+  
+- controller 패키지를 만든다.
+  
+- HelloController 클래스 파일을 만든다.
+
+<br>
+<p align="center"><img src="./images/1-22.png"></p>
+<br>
+
+```java
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+
+@Controller
+public class HelloController {
+      // Web application에서 /hello 라고 입력값이 들어오면
+      // @GetMapping 부분이 호출이 된다.
+    @GetMapping("hello")
+    public String hello(Model model){
+        model.addAttribute("value", "welcome!!");
+        return "hello";
+
+    }
+}
+```
+<br>
+- Web application에서 /hello라고 입력값이 들어오면
+
+```java
+    @GetMapping("hello")
+    public String hello(Model model){
+        model.addAttribute("value", "welcome!!");
+        return "hello";
+```
+<br>
+- 위 코드 부분을 호출해준다.
+  
+- model은 MVC에서의 M에 해당
+  
+- Model 객체는 Controller에서 생성된 데이터를 View로 전달할 때 사용한다.
+
+```html
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Hello</title>
+    <meta http-equiv="Content-Type" content="text/html; charset = UTF-8"/>
+
+</head>
+<body>
+<p th:text="'HELLO!!' + ${value}">처음이시군요. 고객님</p>
+</body>
+</html>
+```
+<br>
+- 위 value값에 "welcome!!"이 들어가서 홈페이지에 <br>
+<p align="center"><img src="./images/1-23.png"></p>
+- 위 그림처럼 뜨게 된다. <br><br>
+##### 전체 과정 설명 <br>
+<p align="center"><img src="./images/1-24.png"></p> <br>
+- 웹 브라우저가 localhost:8080에서 /hello를 스프링 부트쪽으로 던지게 되면 내장된 Tomcat server가 spring에게 다시 보내고
+  
+- spring은 HelloController를 찾은 뒤 이 내부에 <br>
+
+```java
+@Controller
+public class HelloController {
+      // Web application에서 /hello 라고 입력값이 들어오면
+      // @GetMapping 부분이 호출이 된다.
+    @GetMapping("hello")
+    public String hello(Model model){
+        model.addAttribute("value", "welcome!!");
+        return "hello";
+
+    }
+}
+```
+<br>
+- @GetMapping(get, post 에서의 get을 의미)의 "hello"와 매칭되게 됨
+  
+- 그러면 HelloController 내의 @GetMapping이 선언된 hello 라는 메서드가 실행된다.
+  
+- spring이 model을 만들어서 넘겨주는데 model에 "value"와 "welcome!!"을 담아서 view로 넘겨주게 된다
+  
+- return "hello";
+<br>
+<p align="center"><img src="./images/1-25.png"></p> <br>
+- hello.html로 model을 넘기는 것
+  
+- spring boot는 return "hello"; 하게 되면
+  
+- viewResolver에 의해서
+  
+- resource/templates 내의 hello를 찾게 된다.
+  
+- hello.html을 찾아서 랜더링한다.
+  
+- 요약: 컨트롤러에서 리턴 값으로 문자를 반환하면 'viewResolver'가 화면을 찾아서 처리한다.
+  
+  - spring boot 템플릿엔진 기본 viewName 매핑
+    
+  - `resources:template/` + {viewName} + `.html`
+    
+- 참고사항
+  
+  - `spring-boot-devtools` 라이브러리를 추가하면 `html` 파일을 컴파일만 해주면 서버 재시작 없이 view 파일 변경이 가능하다.
+  
 
 ## 2. 스프링 웹 개발 기초
 
