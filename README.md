@@ -182,6 +182,7 @@ Gradle을 쓰는 이유
 - spring-boot-starter-thymeleaf는 html을 렌더링해주는 라이브러리 <br>
 <p align="center"><img src="./images/1-19.png"></p>
 <br>
+
 - spring-boot-starter
   
   - spring-boot
@@ -214,15 +215,19 @@ Gradle을 쓰는 이유
   - assertj (테스트 코드 편하게 작성하게 도와주는 라이브러리)
     
   - spring-test (스프링 통합 테스트)
-  <br>
+  <br><br>
+  
   ### 1-3 View 환경설정
   <br>
   <p align="center"><img src="./images/1-20.png"></p>
   <br>
+  
   [spring-boot-docs](https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#web.servlet.spring-mvc.welcome-page) 공식문서에서 내용을 찾을 수 있음
 
 - main/resources/static 폴더 내에 index.html 파일을 만들어서 넣으면 Welcome page 기능을 제공한다.
+  
 <br>
+
 - ```html
   <!DOCTYPE HTML>
   <html>
@@ -237,6 +242,7 @@ Gradle을 쓰는 이유
   </html>
   ```
   <br>
+  
 - 단순히 파일을 서버에 던져준 것 밖에 안됨
   
 - 템플릿 엔진이라는 것을 쓰면 모양을 바꿀 수 있다.
@@ -301,6 +307,7 @@ public class HelloController {
 }
 ```
 <br>
+
 - Web application에서 /hello라고 입력값이 들어오면
 
 ```java
@@ -310,6 +317,7 @@ public class HelloController {
         return "hello";
 ```
 <br>
+
 - 위 코드 부분을 호출해준다.
   
 - model은 MVC에서의 M에 해당
@@ -330,11 +338,17 @@ public class HelloController {
 </html>
 ```
 <br>
+
 - 위 value값에 "welcome!!"이 들어가서 홈페이지에 <br>
+
 <p align="center"><img src="./images/1-23.png"></p>
+
 - 위 그림처럼 뜨게 된다. <br><br>
+
 ##### 전체 과정 설명 <br>
+
 <p align="center"><img src="./images/1-24.png"></p> <br>
+
 - 웹 브라우저가 localhost:8080에서 /hello를 스프링 부트쪽으로 던지게 되면 내장된 Tomcat server가 spring에게 다시 보내고
   
 - spring은 HelloController를 찾은 뒤 이 내부에 <br>
@@ -353,6 +367,7 @@ public class HelloController {
 }
 ```
 <br>
+
 - @GetMapping(get, post 에서의 get을 의미)의 "hello"와 매칭되게 됨
   
 - 그러면 HelloController 내의 @GetMapping이 선언된 hello 라는 메서드가 실행된다.
@@ -361,7 +376,9 @@ public class HelloController {
   
 - return "hello";
 <br>
+
 <p align="center"><img src="./images/1-25.png"></p> <br>
+
 - hello.html로 model을 넘기는 것
   
 - spring boot는 return "hello"; 하게 되면
