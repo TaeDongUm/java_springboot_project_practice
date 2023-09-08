@@ -10,8 +10,8 @@
 ### 1-1. 프로젝트 생성
 spring에서 운영하는 사이트로, spring boot 기반으로 프로젝트를 만들어주는 사이트
 
-[spring initializer](https://start.spring.io/) ![](./images/1-1.png)
-![](./images/1-2.png) 
+[spring initializer](https://start.spring.io/) ![](./images/chap1/1-1.png)
+![](./images/chap1/1-2.png) 
 
 <참고사이트: [[Java] Gradle, Groovy Gradle, Kotlin Gradle — 일단은 내 이야기](https://kdhyo98.tistory.com/87#Gradle%20%EC%9D%B4%EB%9E%80%3F-1), [Gradle User Manual](https://docs.gradle.org/current/userguide/userguide.html), [Kotlin DSL, Gradle 빌드 기본 언어 채택… 왜 Kotlin DSL일까?](https://blog.imqa.io/kotlin-dsl/), [‘Gradle Kotlin DSL’ 이야기 | 우아한형제들 기술블로그](https://techblog.woowahan.com/2625/)>
 
@@ -75,7 +75,7 @@ Gradle을 쓰는 이유
 
 레거시 프로젝트, 과거 프로젝트의 경우 Maven으로 남아있는게 있지만, 요즘은 Gradle로 넘어가는 추세이다.<br><br><br>
 
-<p align="center"><img src="./images/1-3.png"></p>
+<p align="center"><img src="./images/chap1/1-3.png"></p>
 
 - java 밑에 패키지와 소스파일이 있음
   
@@ -96,52 +96,52 @@ Gradle을 쓰는 이유
   - SDK 17로 설정
     
   - Language level: SDK default
-<p align="center"><img src="./images/1-4.png"></p>
+<p align="center"><img src="./images/chap1/1-4.png"></p>
     
 ### 2. Modules
   
   - Language level 변경
-<p align="center"><img src="./images/1-5.png"></p>
+<p align="center"><img src="./images/chap1/1-5.png"></p>
     
 ### 3. SDKs 설정
   
   - 원하는 JDK 설정  
-<p align="center"><img src="./images/1-6.png"></p>
+<p align="center"><img src="./images/chap1/1-6.png"></p>
   
 ### 4. Project Setting (단축키 Ctrl + Alt + S)
   
   - Build,Execution,Deployment  -> Build Tools -> Gradle
     
   - Gradle JVM 변경
-<p align="center"><img src="./images/1-7.png"></p>
+<p align="center"><img src="./images/chap1/1-7.png"></p>
     
   - Build,Execution,Deployment  -> Compiler -> Java Compiler
     
   - Project bytecode version 변경  
-<p align="center"><img src="./images/1-8.png"></p>
+<p align="center"><img src="./images/chap1/1-8.png"></p>
   
 ### 5. OS JDK 환경변수 설정 다시하기
   
-<p align="center"><img src="./images/1-9.png"></p>
-<p align="center"><img src="./images/1-10.png"></p>
+<p align="center"><img src="./images/chap1/1-9.png"></p>
+<p align="center"><img src="./images/chap1/1-10.png"></p>
   
 
 ## 수행 결과
 
-<p align="center"><img src="./images/1-11.png"></p>
+<p align="center"><img src="./images/chap1/1-11.png"></p>
 
 - 여기서,
   
-<p align="center"><img src="./images/1-12.png"></p>
+<p align="center"><img src="./images/chap1/1-12.png"></p>
   
-<p align="center"><img src="./images/1-13.png"></p>
+<p align="center"><img src="./images/chap1/1-13.png"></p>
   
-<p align="center"><img src="./images/1-14.png"></p>
+<p align="center"><img src="./images/chap1/1-14.png"></p>
   
   - Stop하면
     
   
-<p align="center"><img src="./images/1-15.png"></p>
+<p align="center"><img src="./images/chap1/1-15.png"></p>
   
 - 동작원리
   
@@ -166,12 +166,12 @@ Gradle을 쓰는 이유
     
   - Intellij 로 바꾸면 Intellij에서 자바를 바로 실행시켜서 좀 더 빠르다. (프로젝트를 연습하는 단계에서는 좀 더 편하다)
  
-<p align="center"><img src="./images/1-17.png"></p>
+<p align="center"><img src="./images/chap1/1-17.png"></p>
 <br><br>
 
 ### 1-2 라이브러리 살펴보기
 <br>
-<p align="center"><img src="./images/1-18.png"></p> <br>
+<p align="center"><img src="./images/chap1/1-18.png"></p> <br>
 땡겨온 라이브러리 spring-web, thymeleaf는 각각 또다른 라이브러리에 의존하고 있음 <br>
 의존하는 라이브러리까지 다 땡겨와서 이용하게 된다. <br>
 
@@ -183,7 +183,7 @@ Gradle을 쓰는 이유
   - spring-webmvc
     
 - spring-boot-starter-thymeleaf는 html을 렌더링해주는 라이브러리 <br>
-<p align="center"><img src="./images/1-19.png"></p>
+<p align="center"><img src="./images/chap1/1-19.png"></p>
 <br>
 
 - spring-boot-starter
@@ -222,7 +222,7 @@ Gradle을 쓰는 이유
   
   ### 1-3 View 환경설정
   <br>
-  <p align="center"><img src="./images/1-20.png"></p>
+  <p align="center"><img src="./images/chap1/1-20.png"></p>
   <br>
   
   [spring-boot-docs](https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#web.servlet.spring-mvc.welcome-page) 공식문서에서 내용을 찾을 수 있음
@@ -263,7 +263,7 @@ Gradle을 쓰는 이유
   
 - spring boot 메뉴얼 사이트에서도 지원하는 기능으로 thymeleaf가 있는 것을 확인할 수 있다.
 <br>
-<p align="center"><img src="./images/1-21.png"></p>
+<p align="center"><img src="./images/chap1/1-21.png"></p>
 <br>
 
 ```java
@@ -289,7 +289,7 @@ public class HelloSpringApplication{
 - HelloController 클래스 파일을 만든다.
 
 <br>
-<p align="center"><img src="./images/1-22.png"></p>
+<p align="center"><img src="./images/chap1/1-22.png"></p>
 <br>
 
 ```java
@@ -344,13 +344,13 @@ public class HelloController {
 
 - 위 value값에 "welcome!!"이 들어가서 홈페이지에 <br>
 
-<p align="center"><img src="./images/1-23.png"></p>
+<p align="center"><img src="./images/chap1/1-23.png"></p>
 
 - 위 그림처럼 뜨게 된다. <br><br>
 
 ##### 전체 과정 설명 <br>
 
-<p align="center"><img src="./images/1-24.png"></p> <br>
+<p align="center"><img src="./images/chap1/1-24.png"></p> <br>
 
 - 웹 브라우저가 localhost:8080에서 /hello를 스프링 부트쪽으로 던지게 되면 내장된 Tomcat server가 spring에게 다시 보내고
   
@@ -380,7 +380,7 @@ public class HelloController {
 - return "hello";
 <br>
 
-<p align="center"><img src="./images/1-25.png"></p> <br>
+<p align="center"><img src="./images/chap1/1-25.png"></p> <br>
 
 - hello.html로 model을 넘기는 것
   
