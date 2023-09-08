@@ -528,15 +528,15 @@ public class HelloController {
   
 - 이제 `http://localhost:8080/hello-mvc` 에 들어가보면 <br>
 
-<p align="center"><img src="./images/2-2.png"></p> <br>
+<p align="center"><img src="./images/chap2/2-2.png"></p> <br>
 
 - 에러가 뜨는 것을 확인할 수 있다. <br>
 
-<p align="center"><img src="./images/2-3.png"></p> <br>
+<p align="center"><img src="./images/chap2/2-3.png"></p> <br>
 
-<p align="center"><img src="./images/2-4.png"></p> <br>
+<p align="center"><img src="./images/chap2/2-4.png"></p> <br>
 
-<p align="center"><img src="./images/2-5.png"></p> <br>
+<p align="center"><img src="./images/chap2/2-5.png"></p> <br>
 
 - default가 true이며, 이는 넘어온 값이 존재해야 한다는 것을 의미
   
@@ -544,15 +544,15 @@ public class HelloController {
   
 - 그러면 url 상에서 값을 넘겨줘보자 <br>
 
-<p align="center"><img src="./images/2-6.png"></p> <br>
+<p align="center"><img src="./images/chap2/2-6.png"></p> <br>
 
-<p align="center"><img src="./images/2-7.png"></p> <br>
+<p align="center"><img src="./images/chap2/2-7.png"></p> <br>
 
-<p align="center"><img src="./images/2-9.png"></p> <br>
+<p align="center"><img src="./images/chap2/2-9.png"></p> <br>
 
 - 페이지 소스 보기를 하면 이미지
 
-<p align="center"><img src="./images/2-8.png"></p> <br>
+<p align="center"><img src="./images/chap2/2-8.png"></p> <br>
 
 - HTML로 이루어진 것을 확인할 수 있다.
   
@@ -580,7 +580,7 @@ public class HelloController {
   
 - 위에서 한 것처럼 페이지 소스보기를 하면 <br>
 
-<p align="center"><img src="./images/2-10.png"></p> <br>
+<p align="center"><img src="./images/chap2/2-10.png"></p> <br>
 
 - HTML이 아니라 데이터 그대로를 출력한 것을 확인할 수 있다. <br>
 
@@ -614,13 +614,13 @@ public class HelloController {
   
 - 아까와 다르게 문자열이 아니라 객체를 return으로 넣어준다면? <br>
 
-<p align="center"><img src="./images/2-11.png"></p> <br>
+<p align="center"><img src="./images/chap2/2-11.png"></p> <br>
 
 - HTML이 아닌 데이터를 웹 브라우저로 보냈으며, JSON 형식으로 보낸 것을 확인할 수 있다. <br>
 
 2-1. 동작 원리
 
-<p align="center"><img src="./images/2-12.png"></p> <br>
+<p align="center"><img src="./images/chap2/2-12.png"></p> <br>
 
 - @ResonseBody가 없다면
   
