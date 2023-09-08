@@ -408,6 +408,276 @@ public class HelloController {
 <details>
 <summary>2. 스프링 웹 개발 기초</summary>
 <div markdown="1">
+  
+크게 3가지 방법이 있음
+
+- 정적 컨텐츠
+  
+  - 파일 자체를 웹 브라우저에 전달(서버에서 가공하지 않고 파일 전달)
+    
+  - 클라이언트의 요청을 받으면 서버에 미리 저장된 HTML, CSS, JS 등의 파일을 그대로 보여주는 것
+    
+  - 미리 저장된 파일을 그대로 보여주기 때문에 클라이언트들의 요청에 대해 동인한 결과를 보여준다.
+    
+- MVC 템플릿 엔진 (Model, View, Controller)
+  
+  - 서버에서 동적으로 HTML을 변환하여 웹 브라우저로 보내주는 역할
+    
+  - Model: 어플리케이션이 무엇을 할 것인지
+    
+  - View: 화면에 보여주기 위한
+    
+  - Controller: 모델이 어떻게 처리할지
+    
+- API
+  
+  - JSON과 같은 데이터 구조 포맷으로 클라이언트들에게 전달하는 방식, 화면은 클라이언트쪽에서 그린다.
+    
+  - 서버끼리는 html 필요없이 데이터만 주고 받으면 됨. 서버끼리 통신할 때 사용함
+    
+  - view 없이 그대로 http body에 전달하는 방식 <br>
+
+  #### 2-1 정적 컨텐츠
+
+- HTML 작성
+  
+  - spring boot는 정적 컨텐츠 기능을 제공한다. `/main/resources/static` 하위 폴더에 `hello-static.html` 파일을 생성하고 간단하게 살펴보기 위해서 아래 코드처럼 작성해본다.
+    
+    `hello-static.html`
+    
+    ```html
+    <!DOCTYPE HTML>
+    <html>
+    <head>
+        <title>static content</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    
+    </head>
+    <body>
+    정적 컨텐츠입니다.
+    </body>
+    </html>
+    ```
+    
+- 클라이언트로부터 `localhost:8080/hello-static.html` 요청이 스프링 부트로 들어가게 되면 Tomcat 서버를 거치고 컨트롤러에서 `hello-static` 에 매핑하는 컨트롤러가 있는지 우선 확인한다.
+  
+- 즉, `hello-static` 관련 컨트롤러를 찾음.
+  
+- 동작이 없을 경우 `/resources/static` 하위에서 해당하는 파일을 찾아서 보내준다. <br>
+
+#### 2-2 동적 컨텐츠
+##### 2-2-1 MVC와 템플릿 엔진을 이용한 웹 개발 <br>
+
+- MVC 라는 건 Model, View, Controller를 의미
+  
+- 과거에는 Controller와 View가 따로 분리되어 있지 않았음
+  
+- View에서 다 했음 (모델 1 방식)
+  
+- Model, View, Controller로 나누는 것이 일반적
+  
+- 위에서 만들었던 HelloController.java 파일에 추가를 해보자 (1-3 View 환경설정에서 헀음)
+  
+  ```java
+  package com.example.hellospring.controller;
+  
+  import org.springframework.stereotype.Controller;
+  import org.springframework.ui.Model;
+  import org.springframework.web.bind.annotation.GetMapping;
+  
+  @Controller
+  public class HelloController {
+      @GetMapping("hello")
+      public String hello(Model model){
+          model.addAttribute("value", "welcome!!");
+          return "hello";
+  
+      }
+  
+      // 추가된 부
+      @GetMapping("hello-mvc")
+      // @RequestParam 외부에서 값을 받겠다.
+      // Model에 담으면 view에서 렌더링할 때 쓸 것
+      public String helloMvc(@RequestParam("name") String name, Model model){ // 웹사이트 url을 바꿔서 값을 얻겠다.
+          model.addAttribute("name", name); // "name" 이라는 key 값에 name value값을 model에 담는다.
+          return "hello-template";
+      }
+  }
+  ```
+  
+- `@RequesParam`: 외부에서 값을 받아서 View로 값을 넘겨준다.
+  
+  - `@RequestParam`("가져올 데이터의 이름") [데이터타입] [가져온데이터를 담을 변수]
+- 여기서는 "name"이라는 String 타입 값을 받아서 Model 객체에 넣고, Model 객체를 View로 넘겨준다.
+  
+- 넘겨주는 html은 `hello-template.html` 이다.
+  
+- 그럼, `hello-template.html`을 만들고 간단하게 코드를 작성해보자
+  
+
+```html
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<p th:text="'HELLO!!' + ${name}">hello! client</p>
+</body>
+</html>
+```
+
+- `<p>`의 hello! client는 name값이 존재하게 되면 `HELLO!! {name}`으로 치환되게 된다.
+  
+- 이제 `http://localhost:8080/hello-mvc` 에 들어가보면 <br>
+
+<p align="center"><img src="./images/2-2.png"></p> <br>
+
+- 에러가 뜨는 것을 확인할 수 있다. <br>
+
+<p align="center"><img src="./images/2-3.png"></p> <br>
+
+<p align="center"><img src="./images/2-4.png"></p> <br>
+
+<p align="center"><img src="./images/2-5.png"></p> <br>
+
+- default가 true이며, 이는 넘어온 값이 존재해야 한다는 것을 의미
+  
+- 넘어온 name 값이 없어서 에러가 발생한 것
+  
+- 그러면 url 상에서 값을 넘겨줘보자 <br>
+
+<p align="center"><img src="./images/2-6.png"></p> <br>
+
+<p align="center"><img src="./images/2-7.png"></p> <br>
+
+<p align="center"><img src="./images/2-9.png"></p> <br>
+
+- 페이지 소스 보기를 하면 이미지
+
+<p align="center"><img src="./images/2-8.png"></p> <br>
+
+- HTML로 이루어진 것을 확인할 수 있다.
+  
+- `String name= spring!!!!!` 이 되고
+  
+- `model.addAttribute("name", name);` 에 의해 model에 담겨서 템플릿에 넘겨준다.
+  
+- `<p th:text="'HELLO!!' + ${name}">hello! client</p>` 에서 model의 key값인 name의 value 값을 받아서 `hello! client` 대신해서 `'HELLO!!' spring!!!!!`을 출력하게 된다.
+  
+- 정적 컨텐츠와는 다르게 HTML로 변환 후 웹 브라우저에 넘겨준다. <br>
+
+##### 2-2-2 API 방식
+
+１。이전에 만들었던 HelloController.java에 코드를 추가해보자
+
+```java
+    @GetMapping("hello-string")
+    @ResponseBody // html의 body 태그가 아닌 http에서 header와 body 부분에서 body부분에 데이터를 직접 넣어주겠다.
+    public String helloString(@RequestParam("name") String name){
+        return "hello" + name;
+    }
+```
+
+- 이전 템플릿 엔진과이 차이는 view가 없고 데이터 그대로 출력한다.
+  
+- 위에서 한 것처럼 페이지 소스보기를 하면 <br>
+
+<p align="center"><img src="./images/2-10.png"></p> <br>
+
+- HTML이 아니라 데이터 그대로를 출력한 것을 확인할 수 있다. <br>
+
+２。이전에 만들었던 HelloController.java에 코드를 추가해보자 <br>
+
+```java
+    @GetMapping("hello-api")
+    @ResponseBody
+    public Hello helloApi(@RequestParam("name") String name) {
+        Hello hello = new Hello();
+        hello.setName(name);
+        return hello;
+    }
+
+
+    static class Hello{
+        private String name;
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+    }
+```
+<br>
+
+- Hello 타입의 hello 객체를 만들어서 입력 받은 name 값을 hello 객체에 넣어준다.
+  
+- 아까와 다르게 문자열이 아니라 객체를 return으로 넣어준다면? <br>
+
+<p align="center"><img src="./images/2-11.png"></p> <br>
+
+- HTML이 아닌 데이터를 웹 브라우저로 보냈으며, JSON 형식으로 보낸 것을 확인할 수 있다. <br>
+
+2-1. 동작 원리
+
+<p align="center"><img src="./images/2-12.png"></p> <br>
+
+- @ResonseBody가 없다면
+  
+  - viewResolver가 템플릿을 찾고 HTML로 변환 후 웹 브라우저에 보냈음
+- @ResponseBody를 사용한다면
+  
+  - 데이터를 그대로 넘기게 됨.
+    
+  - 문자라면 그대로 넘기는데 객체라면?
+    
+  - 객체라면 JSON 형식으로 반환해서 HTTP 응답으로 반환한다.
+    
+  - HTTP의 BODY 에 문자 내용을 직접 반환
+    
+  - `viewResolver` 대신에 `HttpMessageConverter` 가 동작한다.
+    
+  - 기본 문자처리: `StringHttpMessageConverter`
+    
+  - 기본 객체처리: `MappingJackson2HttpMessageConverter`
+    
+  - byte 처리 등등 기타 여러 HttpMessageConverter가 기본으로 등록되어 <br>
+
+### 요약
+
+- 정적 컨텐츠: 파일 그대로를 웹 브라우저에 보내는 방식
+  
+- 동적 컨텐츠
+  
+  - MVC 방식: HTML로 변환 후 웹 브라우저에 보내는 방식
+    
+  - API 방식: 데이터로 변환 후 웹 브라우저에 보내는 방식
+    
+
+```java
+    static class Hello{
+        private String name;
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name
+      }
+```
+
+- Getter Setter 개념
+  
+  - private으로 접근 못하게 하고
+    
+  - 외부에서 접근하려면 getName, setName으로 접근하게끔 하는 것
+    
+  - 이를 java bean 표준 방식이라고 한다.
+    
+  - 또 다른 용어로 property 접근 방식이라고 한다.
+  
+
 
 </div>
 </details>
