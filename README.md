@@ -406,7 +406,7 @@ public class HelloController {
 </details>
   
 <details>
-<summary>2. 스프링 웹 개발 기초</summary>
+<summary>2. 스프링 웹 개발 기초 (정리완)</summary>
 <div markdown="1">
   
 크게 3가지 방법이 있음
