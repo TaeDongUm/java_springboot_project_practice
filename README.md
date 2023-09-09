@@ -406,7 +406,7 @@ public class HelloController {
 </details>
   
 <details>
-<summary>2. 스프링 웹 개발 기초 (정리완)</summary>
+<summary>2. 스프링 웹 개발 기초 (정리 완)</summary>
 <div markdown="1">
 
 ## 2. 스프링 웹 개발 기초 <br>
@@ -685,12 +685,12 @@ public class HelloController {
 </details>
 
 <details>
-<summary>3. 회원 관리 예제 - 백엔드 개발</summary>
+<summary>3. 회원 관리 예제 - 백엔드 개발 (정리 완)</summary>
 <div markdown="1">
 
 ## 3. 회원 관리 예제 - 백엔드 개발 <br>
 
-##### 3-1. 비즈니스 요구사항 정리 (정리 완) <br>
+##### 3-1. 비즈니스 요구사항 정리  <br>
 
 ```
 - 비즈니스 요구 사항 정리
