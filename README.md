@@ -1279,10 +1279,7 @@ public class MemberService {
 - Optional을 바로 반환하는 것은 좋지 못하다.
 - 깊게 배우고 싶다면 위 사이트나 이펙티브 자바 책을 살펴볼 것
 
-</div>
-</details>
 
-<details>
 <summary>Optional 만들어진 의도 및 올바른 사용법</summary>
 <div markdown="1">
 
@@ -1373,7 +1370,7 @@ public class MemberService {
   - 반환 타입으로만 사용하자.
 
 </div>
-</details>
+
 
 ##### 3-5. 회원 서비스 테스트
 
