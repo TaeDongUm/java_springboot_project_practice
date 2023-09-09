@@ -1280,8 +1280,7 @@ public class MemberService {
 - 깊게 배우고 싶다면 위 사이트나 이펙티브 자바 책을 살펴볼 것
 
 
-<summary>Optional 만들어진 의도 및 올바른 사용법</summary>
-<div markdown="1">
+Optional 만들어진 의도 및 올바른 사용법
 
 - 만들어진 이유
   
@@ -1368,8 +1367,6 @@ public class MemberService {
   - Collection의 경우 Optional이 아닌 빈 Collection을 사용하자
     
   - 반환 타입으로만 사용하자.
-
-</div>
 
 
 ##### 3-5. 회원 서비스 테스트
@@ -1585,11 +1582,11 @@ public void beforeEach(){
   3. `memberRepository`` 저장소 값을
     
   4. ```java
-    public MemberService(MemberRepository memberRepository){
+      public MemberService(MemberRepository memberRepository){
         this.memberRepository = memberRepository;
-    }
-    // MemberService의 저장소로 주입
-    ```
+      }
+      // MemberService의 저장소로 주입
+      ```
     
 - 위 방법에 의해 같은 저장소를 공유하게 됨
   
