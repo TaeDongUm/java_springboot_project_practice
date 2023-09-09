@@ -408,6 +408,8 @@ public class HelloController {
 <details>
 <summary>2. 스프링 웹 개발 기초 (정리완)</summary>
 <div markdown="1">
+
+## 2. 스프링 웹 개발 기초 <br>
   
 크게 3가지 방법이 있음
 
