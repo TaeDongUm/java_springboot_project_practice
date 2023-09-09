@@ -688,6 +688,967 @@ public class HelloController {
 <summary>3. 회원 관리 예제 - 백엔드 개발</summary>
 <div markdown="1">
 
+## 3. 회원 관리 예제 - 백엔드 개발 <br>
+
+##### 3-1. 비즈니스 요구사항 정리 <br>
+
+```
+- 비즈니스 요구 사항 정리
+
+- 회원 도메인
+
+- 회원 도메인을 저장하고 불러올 수 있는 repository 객체 만들기
+
+- 만든 repository가 정상 동작하는지 테스트하는 테스트 케이스 작성
+```
+
+비즈니스 요구사항 정리 (간단한 비즈니스)
+
+- 데이터: 회원 ID, 이름
+  
+- 기능: 회원 등록, 조회
+  
+- 가정한 상황 : 개발자가 개발해야 하는 시점에 데이터 저장소가 선정되지 않았음
+
+<p align="center"><img src="./images/chap3/3-1.png"></p> <br>
+
+#### 3-2. 회원 domain과 repository 만들기
+
+1. domain 폴더 만들고 그 안에 Member 클래스 만들기
+
+```java
+package hello.hellospring.domain;
+
+public class Member{
+
+    private Long id;
+    private String name;
+
+    public Long getId(){
+        return id;
+    }
+    public void setId(Long id){
+        this.id = id;
+    }
+    public String getName(){
+        return name;
+    }
+    public void setName(String name){
+        this.name =  name;
+    }
+}
+```
+
+- 고객이 정하는 아이디가 아니라 데이터를 구분하기 위한 시스템이 정하는 아이디
+  
+- getter, setter 만들기
+  
+
+2. 회원 객체를 담을 리포지토리 만들기 (repository 폴더 만들기)
+  
+  2-1. MemberRepository 라는 interface 만들기
+
+<p align="center"><img src="./images/chap3/3-2.png"></p> <br>
+
+```java
+package hello.hellospring.repository;
+
+import hello.hellospring.domain.Member;
+
+public interface MemberRepository{
+    Member save(Member member);
+    Optional<Member> findById(Long id);
+    Optional<Member> findByName(String name);
+    List<Member> findAll();
+}
+```
+
+- save 하면 저장된 회원 정보가 반환이 된다.
+  
+- Optional 이란 (java 8에 들어간 기능)
+  
+  - findById 나 findByName의 반환값이 null 일 수 있는데 이 null 값을 Optional로 감싸서 처리하는 것(다음 수업에 배울 것).
+ 
+- interface 동작원리
+  
+  - save를 통해 회원 정보 저장소에 저장한다.
+    
+  - findById, findByName을 통해서 회원의 정보를 찾는다.
+    
+  - findAll을 통해서 모든 회원 정보 반환한다.
+    
+
+3. MemoryMemberRepository 구현체 만들기
+
+```java
+// 전체 코드
+
+public class MemoryMemberRepository implements MemberRepository {
+
+    // 저장할 곳 선언
+    private static Map<Long, Member> store = new HashMap<>();
+    private static long sequence = 0L; // 0 1 2... key값을 생성하는 것 
+
+
+    // 1번
+    @Override
+    public Member save(Member member){
+    member.setId(++sequence); // id 설정한다. 
+    store.put(member.getId(), member); // 그 후 stored 한다.
+    return member; // 저장된 값을 반환해준다. 이렇게 감싸서 null이라도 넘겨주면
+    // 클라이언트쪽에서 뭐라도 할 수 있음    
+    }
+
+
+    // 2번
+    @Override
+    public Optional<Member> findById(Long id){
+        // null이 반환될 것 같으면 Optional로 감싼다.
+        return Optional.ofNullable(store.get(id)); // store에서 id값을 가져온다.
+    }
+
+
+    // 3번
+    @Override
+    public Optional<Member> findByName(String name){
+        return store.values().stream()
+                .filter(member -> member.getName().equals(name))
+                .findAny();
+    }
+
+    // 4번
+    @Override
+    public List<Member> findAll() {
+        return null;
+    }
+
+}
+```
+
+- 저장을 어딘가 해야 함
+  
+  - Map을 이용했음
+    
+  - 현업에서는 변수를 공유할 경우 동시성 문제 때문에 `HashMap`이 아닌  `ConcurrnetHashMap`을 사용하지만 지금처럼 간단한 프로젝트는 그냥 `HashMap` 사용함
+    
+  - long 또한 동시성 문제 때문에 현업에서는 `AtomicLong`을 쓴다. 마찬가지로, 간단한 예제이므로 그냥 `long` 사용함
+    
+- store에다가 넣기 전에 member의 id값을 세팅해준다.
+  
+  ```java
+      private Long id; //시스템이 정해주는 값
+      private String name; // 사용자가 기입한 값
+  ```
+  
+- store에 저장하면 그 값을 반환한다.
+  
+
+```java
+    // 2번
+    // 이렇게 코드를 작성하면 만약 null 값이 반환된다면?
+    // 클라이언트쪽에서는 아무것도 못함
+    @Override
+    public Optional<Member> findById(Long id){
+        // null이 반환될 것 같으면 Optional로 감싼다.
+        return store.get(id); // store에서 id값을 가져온다.
+    }
+
+==>   
+    @Override
+    public Optional<Member> findById(Long id){
+        // null이 반환될 것 같으면 Optional로 감싼다.
+        return Optional.ofNullable(store.get(id)); // store에서 id값을 가져온다.
+    }
+```
+
+```java
+    // 3번
+
+    @Override
+    public Optional<Member> findByName(String name){
+        return store.values().stream()
+                .filter(member -> member.getName().equals(name))
+                .findAny();
+    }
+```
+
+- stream()을 통해 컬렉션에 들어있는 elements들을 순회하면서
+  
+- member의 getName과 parameter로 입력된 name 값이 같은지 판단한다.
+  
+- 같은 경우에만 filter 되고 이를 반환한다.
+  
+- findAny는 stream에서 가장 먼저 탐색되는 element를 return
+  
+- return값은 Optional로 반환이 된다.
+  
+- 끝까지 찾았는데 없다면 Optional에 null이 들어가서 반환된다.
+  
+
+```java
+    // 4번
+    @Override
+    public List<Member> findAll() {
+        return new ArrayList<>(store.values();
+    }
+```
+
+- store에 담겨있는 것들은 member들이며 member들이 반환된다.
+
+##### 3-3. Repository 테스트 케이스 작성 및 검증
+
+##### 다 작성했는데 어떻게 검증할까?
+
+=> 테스트 케이스를 작성해서 검증한다.
+
+검증은
+
+- 자바의 main 메서드를 통해 실행하거나
+  
+- 웹 어플리케이션의 컨트롤러를 통해 해당 기능을 실행해서 검증가능하다.
+  
+- 반복 실행하기 어렵고, 여러 테스트를 한번에 실행하기 어렵다.
+  
+
+=> JUnit 이라는 프레임워크를 통해 문제를 해결함
+
+<p align="center"><img src="./images/chap3/3-3.png"></p> <br>
+
+```java
+package com.example.hellospring.repository;
+
+import com.example.hellospring.domain.Member;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+
+public class MemoryMemberRepositoryTest { // 굳이 public 할 필요는 없음
+
+    MemberRepository repository = new MemoryMemberRepository();
+
+    @Test
+    public void save(){
+        Member member = new Member();
+        member.setName("spring");
+
+        repository.save(member);
+
+        Member result = repository.findById(member.getId()).get();
+        Assertions.assertEquals(member, result);
+    }
+}
+```
+
+<p align="center"><img src="./images/chap3/3-4.png"></p> <br>
+
+- 내가 짠 코드가 제대로 동작하는지 체크하기 위해서
+  
+- 새로 만든 객체 member에 "spring"이라는 name값을 넣어주고
+  
+- DataBase에 저장한 result의 값이 새로 만든 member와 같은지 확인한다.
+  
+- 즉, 새로 만든 객체와 그 객체를 DB에 저장하고 꺼낸 객체가 같은지 확인하는 것.
+  
+- 여기서, Assertions 기능을 사용한다.
+  
+
+```java
+// org.junit.jupiter.api의 Assertions를 사용하면
+Assertions.assertEquals(expected, actual);
+
+// org.assertj.core.api의 경우
+Assertions.assertThat(expected).isEqualTo(actual);
+```
+
+- expected(기대하는 값: 내가 저장소에 저장한 값이 member니까 member가 튀어나오겠지)
+  
+- actual(실제 값: 저장한 값을 꺼냈을 때 그 값)
+  
+- 아무 문제 없으면 아래 그림처럼 녹색불 뜬다.
+
+<p align="center"><img src="./images/chap3/3-4.png"></p> <br>
+
+##### Assertions.assertEquals(expected, actual);
+
+[참고사이트](https://stackoverflow.com/questions/26102865/assertequals-what-is-actual-and-what-is-expected)
+
+- JUnit 프레임워크 Assertions.assertEquals(expected, actual)
+  
+- TestNG 프레임워크 Assertions.assertEquals(actual, expected)
+  
+- 어떤 테스트 프레임워크를 사용하냐에 따라 값의 순서가 달라서 헷갈릴 수 있다.
+  
+- 물론, 결과값이 true일 경우 문제가 되지 않는다.
+  
+- 하지만, 테스트 결과값이 false일 경우 (예: JUnit)
+  
+- 실제로는 expected(예상한 값)은 맞았고 actual이 틀렸지만
+  
+- expected가 false의 원인이라고 반대로 말하기 때문
+  
+- 그래서, 직관적으로 알기 쉬운
+  
+- Assertions.assertThat(expected).isEqualTo(actual); 가 나을 수 있다.
+  
+- 아래 그림이 JUnit에서 반대로 넣을 경우
+  
+- <u>각 테스트 프레임워크의 convention을 잘 따르자!</u>
+
+<p align="center"><img src="./images/chap3/3-5.png"></p> <br>
+
+<p align="center"><img src="./images/chap3/3-6.png"></p> <br>
+
+
+```java
+package com.example.hellospring.repository;
+
+import com.example.hellospring.domain.Member;
+//import org.junit.jupiter.api.Assertions;
+import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.Test;
+
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.*;
+
+public class MemoryMemberRepositoryTest { // 굳이 public 할 필요는 없음
+
+    MemberRepository repository = new MemoryMemberRepository();
+
+    @Test
+    public void save(){
+        Member member = new Member();
+        member.setName("spring");
+
+        repository.save(member);
+
+        Member result = repository.findById(member.getId()).get();
+        Assertions.assertThat(result).isEqualTo(member);
+    }
+
+    @Test
+    public void findByName(){
+        Member member1 = new Member();
+        member1.setName("spring1");
+        repository.save(member1);
+
+        Member member2 = new Member();
+        member2.setName("spring2");
+        repository.save(member2);
+
+        Member result = repository.findByName("spring1").get();
+        Assertions.assertThat(result).isEqualTo(member1);
+    }
+
+    @Test
+    public void findAll(){
+        Member member1 = new Member();
+        member1.setName("spring1");
+        repository.save(member1);
+
+        Member member2 = new Member();
+        member2.setName("spring2");
+        repository.save(member2);
+
+        List<Member> result = repository.findAll();
+        Assertions.assertThat(result.size()).isEqualTo(3);
+    }
+
+}
+```
+
+- findByName()까지 test했을 때 문제없었는데 findAll()을 넣고 test 돌렸더니 에러가 발생
+
+<p align="center"><img src="./images/chap3/3-7.png"></p> <br>
+
+- 왜일까?
+  
+- 테스트의 순서는 보장이 되지 않는다.
+  
+- 순서에 의존적으로 설계해서는 안된다.
+  
+- 즉, 순서 상관없이 메서드별로 따로 동작하도록 설계를 해야 한다.
+  
+- 위에서 보는 것처럼 findAll()이 먼저 실행이 되고 repository에 member1 객체가 저장이 된다.
+  
+- 그 다음 findByName() 메서드를 수행하는데 member1의 새로운 객체가 또 생성이 된다.
+  
+- 그러나, 이름이 "spring1"로 같기 때문에 이전의 member1 객체를 불러서 false가 된 것. **<u>다른 객체가 나온 것</u>**
+  
+
+##### 하나의 메서드에 대한 테스트가 끝나면 저장소 데이터를 CLEAR 시키자
+
+```java
+// test 폴더의 MemoryMemberRepositoryTest.java
+    // interface를 테스트하는 것이 아니므로 MemoryMemberRepository로 바꾼다.
+    MemoryMemberRepository repository = new MemoryMemberRepository();
+
+
+    // Test 메서드가 끝날 때마다 수행하는 @AfterEach 선언    
+    @AfterEach
+    public void aterEach(){
+        repository.clearStore();
+    }
+// main 폴더의 MemoryMemberRepository.java 
+    // 맨 밑에 추
+    public void clearStore(){
+        store.clear();
+    }
+```
+
+- 각 Test 메서드가 끝날 때마다 수행하는 @AfterEach 선언한다.
+  
+- interface를 테스트하는 것이 아니므로 MemoryMemberRepository로 바꾼다.
+  
+- Test 메서드가 끝날 때마다 repository를 지운다.
+  
+
+##### 다시 테스트 시킨 결과
+
+<p align="center"><img src="./images/chap3/3-8.png"></p> <br>
+
+##### 테스트만 해도 굉장히 깊은 내용
+
+- 지금 한 것은 개발을 진행한 뒤 Test 케이스(여기서는 MemoryMemberRepository)를 작성했음
+  
+- 이 방식을 뒤집어서 Test 케이스를 작성한 뒤에 개발을 시작할 수 있다.
+  
+- 이를 TDD (Test-Driven Development) 라고 한다.
+  
+- 나는 세모 모양 결과물을 만들고 싶다
+  
+- 그럼 세모 모양 결과물을 만들기 시작하는 것이 아니라
+  
+- 세모 모양 틀(테스트)을 먼저 만들어놓고 이 틀에 내 결과물을 끼워넣어서 테스트를 하는 것
+  
+
+##### 번외: 여러 Test를 했는데 결과창에 하나만 나온다면?
+
+<p align="center"><img src="./images/chap3/3-9.png"></p> <br>
+
+- File - settings - Preferences - Build, Execution, Deployment - Build Tools - Gradle 이동
+  
+- Run tests using의 속성을 Intellij IDEA로 변경해주고 apply
+
+<p align="center"><img src="./images/chap3/3-10.png"></p> <br>
+
+<p align="center"><img src="./images/chap3/3-11.png"></p> <br>
+
+- 맞게 나온다!
+
+##### 3-4. 서비스 개발
+
+- service 폴더 만들기, 폴더 안에 MemberService 클래스 만들기
+  
+- 기존에 만들었던 저장소 가져오기
+  
+- 회원 가입 만들기
+  
+
+```java
+    private final MemberRepository memberRepository = new MemoryMemberRepository();
+
+    /* 회원가입 */
+    public Long join(Member member){
+        // 같은 이름이 있는 중복 회원 X
+        Optional<Member> result = memberRepository.findByName(member.getName());
+        result.ifPresent(m ->{
+            throw new IllegalStateException("이미 존재하는 회원입니다.");
+        });
+
+        memberRepository.save(member); //
+        return member.getId(); // 단순히 id만 반환해보자
+    }
+```
+
+- 이미 값이 존재하면 throw new 한다.
+  
+  - 반환된 값이 Optional이기 때문에 가능한 것
+    
+  - Optional로 안하면 `if null이 아니면`이라고 구현했을 것
+    
+  - Optional로 감싸면 이 안에 Member 객체가 있다.
+    
+  - 그러면 Optional의 여러 메서드를 사용할 수 있다.
+    
+  - Optional을 사용해서 `ifPresent`를 사용할 수 있음.
+    
+  - `Member member1 = result.get();`
+    
+    - 이렇게 쓸 수 있지만 직접 꺼내는 것을 권장하지는 않음.
+   
+<p align="center"><img src="./images/chap3/3-13.png"></p> <br>
+
+  - `orElseGet` 메서드를 통해서 값이 있으면 가져오지만 값이 없다면 없을 경우에 대해 대응 방법이 구현가능하다.
+    
+- 코드의 가독성을 위해 아래처럼 바꿀 수 있다.
+  
+
+```java
+        Optional<Member> result = memberRepository.findByName(member.getName());
+        result.ifPresent(m ->{
+            throw new IllegalStateException("이미 존재하는 회원입니다.");
+        });
+
+        ==> 첫줄 result와 둘째줄 result를 묶는 느낌이다.
+
+        memberRepository.findByName(member.getName());
+                .ifPresent(m ->{
+                throw new IllegalStateException("이미 존재하는 회원입니다.");
+                });
+```
+
+- Extract Method: 한 메서드에 세세한 처리가 많을 때 그런 처리를 묶어서 나누고 독립된 메서드로 추출하는 것
+  
+- Intellij 단축키 : `crtl` + `alt` + `m`
+  
+  - 만약 단축키가 안먹힌다면 Geforce Experience 게임 내 오버레이 해제
+    
+  - 또는 다른 프로그램에서 해당 단축키를 사용하는지 확인해볼 것
+
+```java
+    public Long join(Member member){
+
+        validateDuplicateMember(member); // 중복 회원 검사
+
+        memberRepository.save(member); 
+        return member.getId(); 
+    }
+
+     private void validateDuplicateMember(Member member) {
+     memberRepository.findByName(member.getName())
+             .ifPresent(m ->{
+                 throw new IllegalStateException("이미 존재하는 회원입니다.");
+             });
+    }
+```
+
+##### 전체 코드
+
+```java
+package com.example.hellospring.service;
+
+import com.example.hellospring.domain.Member;
+import com.example.hellospring.repository.MemberRepository;
+import com.example.hellospring.repository.MemoryMemberRepository;
+
+import java.util.List;
+import java.util.Optional;
+
+public class MemberService {
+
+    private final MemberRepository memberRepository = new MemoryMemberRepository();
+
+    /* 회원가입 */
+    public Long join(Member member){
+        // 같은 이름이 있는 중복 회원 X
+//        Optional<Member> result = memberRepository.findByName(member.getName());
+//        result.ifPresent(m ->{
+//            throw new IllegalStateException("이미 존재하는 회원입니다.");
+//        });
+
+        validateDuplicateMember(member);
+
+        memberRepository.save(member); //
+        return member.getId(); // 단순히 id만 반환해보자
+    }
+
+    private void validateDuplicateMember(Member member) {
+        memberRepository.findByName(member.getName())
+                .ifPresent(m ->{
+                    throw new IllegalStateException("이미 존재하는 회원입니다.");
+                });
+    }
+
+    /*전체 회원 조회*/
+    public List<Member> findMembers(){
+        return memberRepository.findAll();
+    }
+
+    public Optional<Member> findOne(Long memeberId){
+        return memberRepository.findById((memeberId));
+    }
+
+}
+```
+
+- 중복 회원 검사는 제대로 하는지, 오류가 발생했을 때 오류메세지는 잘 띄우는지 테스트해봐야 한다.
+
+##### Optional에 대한 Tip [참고사이트: 망나니개발자](https://mangkyu.tistory.com/203)
+
+- 연습하는 단계이므로 위 프로젝트는 그냥 진행함. 하지만,
+- Optional을 바로 반환하는 것은 좋지 못하다.
+- 깊게 배우고 싶다면 위 사이트나 이펙티브 자바 책을 살펴볼 것
+
+</div>
+</details>
+
+<details>
+<summary>Optional 만들어진 의도 및 올바른 사용법</summary>
+<div markdown="1">
+
+- 만들어진 이유
+  
+  - null을 반환하면 오류가 발생할 가능성이 매우 높은 경우에 오류를 발생시키지 않고 메소드의 반환 타입으로 사용되도록 설계되었음.
+- 장점
+  
+  - 코드가 `Null - safe` 해진다.
+    
+  - 가독성이 좋아진다.
+    
+  - 어플리케이션이 안정적이게 된다.
+    
+  - 위 장점은 제대로 사용했을 때 경우임
+    
+- 제대로 쓰지 않으면 위험하다
+  
+  - NullPointerException 대신 NoSuchElementException이 발생할 수 있음
+    
+    - 값이 있는지 판단하지 않고 쓴다면 NSEE가 발생
+  - 이전에 발생하지 않았던 문제가 발생함
+    
+    - 문제가 되는 대표적인 경우가 직렬화(Serialize)를 할 때
+      
+    - Optional은 직렬화를 지원하지 않음
+      
+    - 캐시나 메세지큐 등과 연동할 때 문제 발생할 수 있음
+      
+  - 코드의 가독성을 떨어뜨림
+    
+    - Optional을 쓰기 위해 값의 유무 검사를 여러 번 할 수도 있다.
+  - 시간적, 공간적 비용이 증가함
+    
+    - 공간적 비용: Optional은 객체를 감싸는 컨테이너이므로 Optional 객체 자체를 저장하기 위한 메모리가 추가로 필요하다.
+      
+    - 시간적 비용: Optional 안에 있는 객체를 얻기 위해서는 Optional 객체를 통해 접근해야 하므로 접근 비용이 증가한다.
+      
+- 올바른 사용법
+  
+  - Optional 변수에 `Null`을 할당하지 않아야 한다.
+    
+    - `Null`을 할당하는 것은 Optional 변수 자체가 `Null`인지 또 검사해야 하기 때문
+      
+    - 값이 없다면 `Optional.empty()`로 초기화 하자
+      
+  - 값이 없을 때 `Optional.orElseX()`로 기본 값을 반환하자.
+    
+    - 가급적이면 `isPresent()`로 검사하고 `get()`으로 값을 꺼내기보다 `orElseGet` 등을 활용해 처리하자
+      
+    - `orElseGet`은 값이 준비되어 있지 않을 경우, `orElse`는 값이 준비되어 있는 경우에 사용한다.
+      
+    - 만약 `Null`을 반환해야 하는 경우 `orElse(Null)`을 활용하자.
+      
+    
+    ```java
+    private String findDefaultName() {
+        return ...;
+    }
+    
+    // AVOID
+    public String findUserName(long id) {
+    
+        Optional<String> optionalName = ... ;
+    
+        if (optionalName.isPresent()) {
+            return optionalName.get();
+        } else {
+            return findDefaultName();
+        }
+    }
+    
+    // PREFER
+    public String findUserName(long id) {
+    
+        Optional<String> optionalName = ... ;
+        return optionalName.orElseGet(this::findDefaultName);
+    }
+    ```
+    
+  - 단순히 값을 얻으려는 목적으로만 Optional을 사용하지 않아야 한다.
+    
+    - 차라리 직접 값을 다루자
+  - 생성자, 수정자, 메서드 파라미터 등으로 Optional을 넘기지 말아라
+    
+  - Collection의 경우 Optional이 아닌 빈 Collection을 사용하자
+    
+  - 반환 타입으로만 사용하자.
+
+</div>
+</details>
+
+##### 3-5. 회원 서비스 테스트
+
+- 테스트 하고 싶은 클래스에 `ctrl` + `Enter` , Create Test를 클릭
+
+<p align="center"><img src="./images/chap3/3-14.png"></p> <br>
+
+- 또는 `ctrl` + `shift` + `T`
+
+<p align="center"><img src="./images/chap3/3-15.png"></p> <br>
+
+<p align="center"><img src="./images/chap3/3-16.png"></p> <br>
+
+- 자동으로 Test 파일을 만들고 틀을 만들어준다.
+  
+- Test 코드는 build 될 때 실제 코드에 포함되지 않는다.
+  
+
+```java
+//MemberService.java
+    public Long join(Member member){
+
+
+        validateDuplicateMember(member); // 중복회원 검증
+        memberRepository.save(member); //
+        return member.getId(); // 단순히 id만 반환해보자
+    }
+
+    private void validateDuplicateMember(Member member) {
+        memberRepository.findByName(member.getName())
+                .ifPresent(m ->{
+                    throw new IllegalStateException("이미 존재하는 회원입니다.");
+                });
+    }
+```
+
+- 단순히 입력값이 제대로 저장되는지뿐만 아니라 `validataeDuplicateMember()` 또한 제대로 동작하는지 파악해야 한다.
+  
+- 중복 회원 검증 `throw new IllegalStateException("이미 존재하는 회원입니다.")` 가 출력이 제대로 되는지 테스트해야 한다.
+  
+
+##### 방법 1.
+
+```java
+    @Test
+    public void DuplicateMemberCheck(){
+
+        // 일부러 똑같은 이름으로 저장한다.
+        Member member1 = new Member();
+        member1.setName("spring");
+
+        Member member2 = new Member();
+        member2.setName("spring");
+
+        memberService.join(member1);
+        try{
+            memberService.join(member2);
+            fail();
+        }catch(IllegalStateException e){
+            assertThat(e.getMessage()).isEqualTo("이미 존재하는 회원입니다.");
+        }
+
+    }
+```
+
+- 일부러 똑같은 이름으로 다른 2개의 객체를 저장소에 저장한다.
+  
+- 우리가 원하는 건 예외상황이 발생해서 출력문 `"이미 존재하는 회원입니다."`가 제대로 뜨는지 확인해야 함
+  
+- `try-catch`문으로 할 수도 있다.
+  
+- **<u>우리가 원하는 건 예외가 발생해야 함</u>**
+  
+- `memberService.join(member2)`에서 예외상황이 발생하지 않고`catch문`으로 가지 못하면 Test 결과가 `true`가 뜨게 되고
+  
+- `validateDuplicateMember(member);`가 제대로 동작하지 않았다는 의미 ("spring"이란 똑같은 이름으로 저장소에 저장했음에도 불구하고)
+  
+- 그렇기 때문에 `fail()`메서드를 넣은 것
+  
+  - fail():
+    
+    - 무조건 실패로 AssertionError가 발생하고 다음 라인부터 실행되지 않습니다.
+- `catch문`으로 들어가게 되면 `validateDuplicateMember(member);`에서 발생한 문구와 같은지 판단한다.
+  
+
+##### 방법 2.
+
+```java
+    @Test
+    public void DuplicateMemberCheck(){
+        //given
+        // 일부러 똑같은 이름으로 저장한다.
+        Member member1 = new Member();
+        member1.setName("spring");
+
+        Member member2 = new Member();
+        member2.setName("spring");
+
+        memberService.join(member1);
+        assertThrows(IllegalStateException.class, () -> memberService.join(member2));
+```
+
+- **`asserThrows(발생이 예상되는 예외의 타입, 예외가 발생될 수 있는 코드 블록)`**
+  
+- 예상되는 Exception이 발생하면 해당 Exception을 return value로 반환한다. 아래 코드처럼 반환 메세지를 받아서 검증도 가능하다.
+  
+
+```java
+ assertThrows(IllegalStateException.class, () -> memberService.join(member2))
+
+ ==> 위 코드를 바꾼다면
+
+ IllegalStateException e = assertThrows(IllegalStateException.class, () -> memberService.join(member2));
+ assertThat(e.getMessage()).isEqualTo("이미 존재하는 회원입니다."); 
+```
+
+- 값이 같다면 테스트는 성공
+  
+- 값이 다르다면
+  
+
+```java
+IllegalStateException e = assertThrows(IllegalStateException.class, () -> memberService.join(member2));
+assertThat(e.getMessage()).isEqualTo("이미 존재하는 회원입니다.1111");
+```
+
+<p align="center"><img src="./images/chap3/3-17.png"></p> <br>
+
+- 위 처럼 오류가 발생, 테스트 실패
+
+##### 이전 DB에 저장된 값 clear 해주기
+
+- 이전 값이 저장소에 계속 누적이 되기 때문에 테스트를 방해할 수 있다.
+  
+- 그래서, 하나의 메서드가 실행이 끝나면 저장소를 `clear()`해준다.
+  
+
+```java
+    // 다른 클래스의 객체를 가져온다.
+    MemoryMemberRepository memberRepository = new MemoryMemberRepository();
+
+    // 저장소 clear하기
+    @AfterEach
+    public void aterEach(){
+
+        memberRepository.clearStore();
+    }
+```
+
+- 위 코드에서의 문제점이 있다.
+  
+- 이전에 만든 `MemoryMemberRepository`클래스의 저장소 객체와 `MemoryMemberRepositoryTest` 클래스에서 선언한 저장소 객체가 다르기 때문
+  
+  - 즉, 다른 DB라는 의미
+- 물론, 위 프로젝트는 `static`으로 선언했기 때문에 테스트는 제대로 동작한다.
+  
+- `static`은 `instance`와 상관없이 클래스에 붙기 때문에 위 프로젝트는 제대로 동작
+
+<p align="center"><img src="./images/chap3/3-18.png"></p> <br>
+
+- 하지만, static이 아니라면?
+  
+  - 다른 `instance`이므로 문제 발생!!
+
+##### static 저장소가 아닐 경우 개선 방법 (DI: Dependency Injection)
+
+###### - 저장소를 만들 때 외부에서 값을 넣어주도록 설계한다.
+
+- 이전 저장소 설계
+
+```java
+// MemoryService.java 
+private final MemberRepository memberRepository = new MemoryMemberRepository();
+
+// MemberServiceTest.java
+    MemberService memberService = new MemberService();
+    MemoryMemberRepository memberRepository = new MemoryMemberRepository(); // 다른 클래스의 객체를 가져온다.
+```
+
+- 개선된 저장소 설
+
+```java
+// MemoryService.java
+private final MemberRepository memberRepository;
+
+public MemberService(MemberRepository memberRepository){
+    this.memberRepository = memberRepository;
+}
+
+// MemberServiceTest.java
+MemberService memberService;
+MemoryMemberRepository memberRepository;
+
+// DB에 데이터가 누적돼서 테스트가 제대로 안될 수 있기 때문에 저장소 clear를 해준다.
+@BeforeEach
+public void beforeEach(){
+    memberRepository = new MemoryMemberRepository();
+    memberService = new MemberService(memberRepository);
+}
+```
+
+- `MemoryService.java` 에서 `MemberRepository`를 `new 생성자`를 통해서 객체를 생성하지 않고 외부의 값을 넣어준다.
+  
+- `MemoryServiceTest.java`에서 테스트를 실행하기 전에 `@BeforeEach`를 통해서 **<u>값을 주입한다.</u>**
+  
+- 그러면, 테스트는 독립적으로 실행되어야 하며, 위 프로젝트 또한 독립적으로 테스트를 진행하게 될텐데
+  
+  1. `memberRepository = new MemoryMemberRepository();`를 통해서 저장소가 생성됨
+    
+  2. `memberService = new MemberService(memberRepository);`를 통해 값을 주입
+    
+  3. `memberRepository`` 저장소 값을
+    
+  4. ```java
+    public MemberService(MemberRepository memberRepository){
+        this.memberRepository = memberRepository;
+    }
+    // MemberService의 저장소로 주입
+    ```
+    
+- 위 방법에 의해 같은 저장소를 공유하게 됨
+  
+
+##### 요약
+
+- 저장소는 각 클래스별로 선언하게 되면 다른 객체
+  
+- 공유가 안될 수 있음
+  
+- DI 적용
+  
+- `MemberService클래스`에서 멤버변수에 `MemoryMemberRepository` 객체를 생성하지 않고 참조변수만을 선언한다.
+  
+- 생성자를 만들어 `MemoryMemberRepository` 객체를 주입받고 그 객체를 멤버변수 `MemberRepository`로서 사용하도록 한다.
+  
+- `MemberServiceTest클래스`에서 MemberService 생성자를 사용하여 `MemberService` 객체를 생성하는데 이 때, 생성자의 인자에 `MemoryMemberRepository` 객체를 생성해 주입한다.
+  
+- `MemberService클래스`에서 생성자를 만들었고 생성자의 인자로 `MemoryMemberRepository` 객체를 주입받고 그 객체를 멤버변수로 사용하기로 한 것.
+  
+
+========================================================================================
+
+##### __궁금증
+
+- ```java
+  // MemoryService.java
+  private final MemberRepository memberRepository;
+  
+  public MemberService(MemberRepository memberRepository){
+      this.memberRepository = memberRepository;
+  }
+  ```
+  
+- 인터페이스를 구현한게 `MemoryMemberRepository`이다.
+  
+- 위 코드에서 `MemberRepository memberRepository;` 이게 아니라 `MemoryMemberRepository memberRepository;`로 선언해야 `MemoryMemberRepository`에서 구현한 내용을 이용할 수 있지 않을까?
+  
+
+##### __답변:
+
+- `MemberRepository`를 인터페이스로 선언하고 `MemoryMemberRepository`를 구현한 클래스로 사용하는 것은 객체 지향 프로그래밍의 원칙 중 하나인 의존성 역전 원칙`(Dependency Inversion Principle)`을 따르기 위함
+  
+- DIP를 지킴으로써 다양한 `MemberXXXRepository`의 구현체 클래스를 코드의 변경 없이 교체하는 것을 확인하실 수 있다.
+  
+- 그것이 가능한 이유는 인터페이스에 의존했기 때문이며, 만약 ``MemoryMemberRepository`에서 정의한 메서드를 사용해야한다면 다음과 같은 방식을 고려하자.
+  
+  1. 해당 메서드를 `MemberRepository` 인터페이스에 추가하고, 필요한 경우 다른 구현체에도 메서드를 구현하자. 이렇게 하면 인터페이스를 통해 해당 메서드를 사용할 수 있다.
+    
+  2. `MemoryMemberRepository`에만 필요한 기능이라면, 별도의 인터페이스를 만들고 그 인터페이스에 해당 메서드를 정의하자. 그리고` MemoryMemberRepository`가 새로 만든 인터페이스를 구현하도록 하세요. 이후,` MemberService`에서 새로 만든 인터페이스를 사용하면 된다..
+    
+- 이렇게 함으로써 구현체 클래스에 의존하지 않고 인터페이스에 의존한 설계가 가능하도록 할 수 있다.
+  
+
+===========================================================================================
+
 </div>
 </details>
 
