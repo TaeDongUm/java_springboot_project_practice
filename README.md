@@ -477,6 +477,23 @@ public class HelloController {
 - View에서 다 했음 (모델 1 방식)
   
 - Model, View, Controller로 나누는 것이 일반적
+
+==========================================================================
+
+##### __spring MVC 패턴에 대한 간단한 설명
+
+참고사이트: [스프링부트, MVC 패턴 Controller(컨트롤러)의 역할과 생성 (URI)](https://sudo-minz.tistory.com/25)
+
+- Application의 역할을 Model, View, Controller로 나누어서 이들 사이 상호작용을 통제하는 아키텍처 패턴이다.
+  
+  1. Model: 목표하는 비즈니스를 구현한 것
+    
+  2. View: 화면에 표현하는 것
+    
+  3. Controller: 위 2가지의 상호작용을 통제하는 것
+ 
+
+
   
 - 위에서 만들었던 HelloController.java 파일에 추가를 해보자 (1-3 View 환경설정에서 헀음)
   
@@ -509,10 +526,10 @@ public class HelloController {
   
 - `@RequesParam`: 외부에서 값을 받아서 View로 값을 넘겨준다.
   
-  - `@RequestParam`("가져올 데이터의 이름") [데이터타입] [가져온데이터를 담을 변수]
-- 여기서는 "name"이라는 String 타입 값을 받아서 Model 객체에 넣고, Model 객체를 View로 넘겨준다.
+  - `@RequestParam("가져올 데이터의 이름") [데이터타입] [가져온데이터를 담을 변수]`
+- 여기서는 `"name"`이라는 String 타입 값을 받아서 `Model 객체`에 넣고, `Model 객체`를 `View`로 넘겨준다.
   
-- 넘겨주는 html은 `hello-template.html` 이다.
+- 넘겨주는 `html`은 `hello-template.html` 이다.
   
 - 그럼, `hello-template.html`을 만들고 간단하게 코드를 작성해보자
   
@@ -542,7 +559,7 @@ public class HelloController {
 
 - default가 true이며, 이는 넘어온 값이 존재해야 한다는 것을 의미
   
-- 넘어온 name 값이 없어서 에러가 발생한 것
+- **넘어온 name 값이 없어서 에러가 발생한 것**
   
 - 그러면 url 상에서 값을 넘겨줘보자 <br>
 
