@@ -1,6 +1,6 @@
 ## 출처: 인프런의 [김영한님 강의](https://www.inflearn.com/course/%EC%8A%A4%ED%94%84%EB%A7%81-%EC%9E%85%EB%AC%B8-%EC%8A%A4%ED%94%84%EB%A7%81%EB%B6%80%ED%8A%B8) 를 바탕으로 공부한 것을 기록하는 repo입니다!
 
-# java_springboot_project_practice
+# java_springboot_project_practice (정리한 것 전체적으로 다시 정리하기_오타 등등)
 
 <details>
 <summary>1. 프로젝트 환경설정 (정리 완)</summary>
