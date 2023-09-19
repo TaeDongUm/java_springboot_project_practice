@@ -1667,6 +1667,315 @@ public void beforeEach(){
 <summary>4. 스프링 빈과 의존관계</summary>
 <div markdown="1">
 
+- 화면에 사용자가 볼 수 있게끔 하려고 함
+  
+- `MemberController`가 `MemberService`를 통해서 회원가입 및 데이터를 조회하게 되는데 이를 의존 관계에 있다고 한다.
+  
+- `controller` 폴더에 `MemberController`라는 클래스를 만들자.
+  
+- `@Controller`가 붙여있다면 `spring`이 어노테이션이 붙은 클래스를 객체를 생성해서 관리하게 됨.
+  
+- `spring`은 이 클라스를 컨트롤러로 인식한다.
+  
+- 이를 `spring container에서 spring bean이 관리된다.` 라고 표현한다.
+  
+- `spring`에서는 객체를 `bean`이라는 이름으로 불린다.
+  
+
+```java
+// MemeberController.java
+@Controller
+public class MemberController {
+    private final MemberService meberService = new MemberService();
+}
+```
+
+- `Controller(컨트롤러)`는 `화면(View)`과 `비즈니스 로직(Model)`을 연결시키는 역할인데
+  
+- View와 Model을 연결시키기 위해 회원 정보에 접근해야 할 것.
+  
+- 회원 정보에 접근하기 위해서 `MemberService` 객체를 생성한다고 한다면
+  
+- 객체는 `Spring Container`에 등록이 되고 `Container`로부터 받아서 쓰게 된다.
+  
+- 하지만, 여기서 위 코드의 문제점이 존재한다.
+  
+- `@Controller`는 `MemberController`만 있는 것이 아님
+  
+- 다른 컨트롤러가 회원 정보에 접근하기 위해 `MemberService` 를 이용해야 할 수도 있다.
+  
+- `MemberController`에 접근할 때마다 `MemberService`객체가 생성이 될텐데
+  
+- 즉, `MemberService` 객체는 여러 번 생성이 될 필요가 없다. (이번 프로젝트에서는 `MemberService` 기능이 그리 많지 않기 때문, 그 판단에 대해서는 추가적인 검색이 필요)
+  
+- 그렇다면 `Spring Container`에 직접 연결한다면?
+  
+  - `alt` + `insert` , Contruct 클릭
+    
+  - `@Autowired` 코드 작성하기
+    
+  
+  ```java
+  // MemeberController.java
+  @Controller
+  public class MemberController {
+      private final MemberService meberService = new MemberService()
+  
+      @Autowired
+      public MemberController(MemberService memberService){
+          this.memberService = memberService;
+      }
+  }
+  ```
+  
+- `memberController` 내의 생성자가 호출이 될 때 `@Autowired`에 의해서 `spring container`에 등록되어 있는 `memberService`를 객체를 가져와서 위 생성자 괄호() 안의 `memberService`에 넣어준다.
+  
+- 이를 `Dependency Injection`이라고 한다.
+  
+- 의존 관계를 주입해준다.
+  
+- 저장소도 마찬가지이다.
+
+<p align="center"><img src="./images/chap4/4-5.png"></p> <br>
+
+- `@Service`에 의해 `MemberService`의 객체들이 `spring container`에 등록이 될 것이고(spring bean이 되며, 관리 대상)
+  
+- `MemberService` 의 생성자가 호출이 될 때 `@Autowired`에 의해서 `spring container`의 `memberRepository`가 불려와서 위 생성자 괄호() 안의 `memberRepository`에 넣어준다.
+  
+- 여기서, `MemberRepository`의 구현체인 `MemoryMemberRepository`의 객체가 불려와진다.
+  
+- 위 과정을 마치면
+
+<p align="center"><img src="./images/chap4/4-6.png"></p> <br>
+
+##### 스프링 빈을 등록하는 2가지 방법
+
+1. 컴포넌트 스캔과 자동 의존관계 설정
+  
+  - 위에서 어노테이션 붙이면서 한 방법이 컴포넌트 스캔 방식
+    
+  - `@Component`, `@Controller` 등의 어노테이션을 붙이는 자동 등록 방식
+    
+  - `ctrl` + `마우스 클릭` 을 `@Service`에 해서 들어가보면
+    
+  - `@Component`가 붙여져 있다.
+
+<p align="center"><img src="./images/chap4/4-7.png"></p> <br>
+
+1. - 다른 어노테이션도 마찬가지 (컨트롤러, 저장소 등)
+    
+  - 자바 웹 어플리케이션이 실행되면 `Component` 관련된 어노테이션이 있으면 객체를 생성해서 `spring container`에 등록한다.
+    
+  - `@Autowired`는 객체에 대한 연관관계를 지어준다.
+    
+    - `spring container`에 등록되지 않으면 `@Autowired`는 동작하지 않는다.
+  - **`spring bean`으로 만들어서 관리 대상이 되면 얻는 이점들이 있다. 이 부분은 찾아서 봐볼 것.**
+    
+
+===================================================================
+
+##### 오류 상황: 강의에서는 Run 버튼이 활성화되어있는데 내 컴퓨터 인텔리제이는 비활성화되어있다.
+
+- JUnit이 기본 실행으로 잡혀있어서 그럴 수도 있다.
+  
+- 참고사이트: [인텔리제이 Run 실행 안 될 때 해결 방법](https://ottl-seo.tistory.com/entry/%EC%9D%B8%ED%85%94%EB%A6%AC%EC%A0%9C%EC%9D%B4-Run-%EC%8B%A4%ED%96%89-%EC%95%88-%EB%90%A0-%EB%95%8C-%ED%95%B4%EA%B2%B0-%EB%B0%A9%EB%B2%95)
+  
+- 실행 제대로 됨.
+  
+
+=====================================================================
+
+아무때나 어노테이션을 써도 될까?
+
+<p align="center"><img src="./images/chap4/4-8.png"></p> <br>
+
+- 우리는 `HelloSpringApplication`을 실행시킨다.
+
+<p align="center"><img src="./images/chap4/4-9.png"></p> <br>
+
+- `com.example.hellospring ` 패키지 하위에 속하는 것들을 `spring bean`으로 자동 등록된다.
+  
+- 패키지와 동일하거나 하위가 아니면 자동 등록이 안된다. (스프링 빈으로 컴포넌트 스캔 안함)
+  
+- 물론, 따로 설정을 하면 되지만 기본 설정으로는 자동 스캔되지 않는다.
+
+=====================================================================
+
+##### 참고사항:
+
+스프링은 스프링 컨테이너에 스프링 빈을 등록할 때, 기본으로 싱글톤으로 등록한다.(하나만 등록해서 공유한다.) 따라서, 같은 스프링 빈이면 모두 같은 인스턴스이다. 설정으로 싱글톤이 아니게 설정할 수 있지만, 특별한 경우를 제외하면 대부분 싱글톤을 사용한다.
+
+- 예:
+  
+- `memberService` 라는 명으로 하나만 등록, `OrderService`라는 명으로 하나만 등록
+  
+
+=====================================================================
+
+
+스프링 빈을 등록하는 2가지 방법
+
+2. 자바 코드로 직접 스프링 빈 등록하기
+  
+
+- 직접 자바 코드로 작성하기 위해서 `@Service`와 `@Repositoy` 를 지워보면 위에서 배운 것처럼 자바 웹 어플리케이션이 실행될 때 `spring`이 `Component` 어노테이션이 붙은 클래스를 객체로 저장하는데
+  
+- `@Component` 어노테이션이 없다면 해당 메서드를 인식을 못한다.
+  
+- 인식 못하게 만들어놓고
+  
+- 이제 자바 코드로 직접 스프링 빈 등록해보자
+
+
+```java
+@Configuration
+public class SpringConfig {
+
+    @Bean
+    public MemberService memberService(){
+        return new MemberService(memberRepository());
+    }
+
+    @Bean
+    public MemberRepository memberRepository(){
+        return new MemoryMemberRepository();
+    }
+}
+```
+
+- 자바 웹 어플리케이션이 동작할 때 `@Configuration`을 통해서 `MemberService`와 `MemberRepository`를 `spring container`에 객체로 저장해야 하는 대상으로 인식하게 된다.
+  
+- `return new MemberService(memberRepository())`
+  
+- `spring bean`에 저장되어 있는 `memberRepository`를 `memberService`에 넣어준다.
+
+<p align="center"><img src="./images/chap4/4-10.png"></p> <br>
+
+====================================================================
+
+##### DI 주입에는 생성자 주입, 필드 주입, setter 주입, 3가지가 있다.
+
+참고사이트: [스프링 - 생성자 주입을 사용해야 하는 이유, 필드인젝션이 좋지 않은 이유](https://yaboong.github.io/spring/2019/08/29/why-field-injection-is-bad/), [생성자 주입을 @Autowired를 사용하는 필드 주입보다 권장하는 하는 이유](https://madplay.github.io/post/why-constructor-injection-is-better-than-field-injection)
+
+1. 생성자 주입
+
+```java
+@Controller
+public class MemberController {
+   private final MemberService memberService;
+
+    @Autowired
+    public MemberController(MemberService memberService) {
+        this.memberService = memberService;
+    }
+
+}
+```
+
+- 생성자를 통해서 `memberService`가 `MemberController`에 주입이 된다.
+
+2. 필드 주입
+
+```java
+@Controller
+public class MemberController {
+    @Autowired private final MemberService memberService;
+
+
+//    @Autowired
+//    public MemberController(MemberService memberService) {
+//        this.memberService = memberService;
+//    }
+
+}
+```
+
+- 필드에 바로 의존 관계를 주입하는 방법
+  
+- 권장하는 방법은 아님
+  
+- Intellij 에서 필드 주입을 사용하면 `Field injection is not recommend`라는 경고가 뜬다.
+  
+- 과거에는 코드가 간결해져서 상당히 많이 썼지만 `외부에서 접근이 불가능하다는 단점`이 존재한다.
+  
+- 테스트 코드의 중요성이 부각됨에 따라 필드의 객체를 수정할 수 없는 필드 주입은 거의 사용하지 않게 되었음
+  
+
+3. setter 주입
+
+```java
+@Controller
+public class MemberController {
+    private MemberService memberService;
+
+
+    @Autowired
+    public void setMemberService(MemberService memberService){
+        this.memberService = memberService;
+    }
+//    @Autowired
+//    public MemberController(MemberService memberService) {
+//        this.memberService = memberService;
+//    }
+
+}
+```
+
+- `private final` 에서 `private`으로 변경
+  
+  - 왜?
+    
+  - ```java
+    // 예
+    class Judy {
+    
+        Nick nick;
+            final String message = nick.say(); // nick이 null값으로 error가 발생한다
+    
+        Judy(Nick nick) { // 생성
+                this.nick = nick; 
+          }
+    
+    }
+    ```
+    
+  - final 필드가 초기화 되는 시점은 생성자가 실행되기 전에 진행된다.
+    
+  - 그럼 final 필드인 message의 초기값에 nick 변수의 값은 null이 들어간다.
+    
+- setter의 단점
+  
+  - public으로 열려 있어서 외부에서 접근 및 변경이 가능하다는 점
+
+=====================================================================
+
+##### 컴포넌트의 클래스와 메서드를 다른 곳에서 사용하려면?
+
+아래 그림처럼 하면 된다.
+
+<p align="center"><img src="./images/chap4/4-11.png"></p> <br>
+
+<p align="center"><img src="./images/chap4/4-12.png"></p> <br>
+
+=====================================================================
+
+##### 수동 spring bean 등록에는 왜 `@Controller`를 뺄까?
+
+- `@Service` 나 `@Repository`는 스프링이 없어도 잘 동작할 수 있다.
+  
+- 컨트롤러는 스프링이 제공하는 기능 중 하나
+  
+- `@Controller` 자체에 이미 컴포넌트 스캔의 의미가 내장되어 있다.
+  
+- 따라서, `@Bean`으로 별도로 등록해서 사용하는 것도 가능하지만 굳이 그럴 필요가 없다.
+  
+- 고객의 URL 요청에 맞추어 특정 컨트롤러가 호출되는 행위들을 모두 컨트롤러가 제공하는 기능이다.
+  
+- 따라서, 스프링 없이 컨트롤러만 단독으로 사용하는 일은 사실상 없다.
+  
+- 컨트롤러도 객체이므로 `@Controller` 또는 `@Bean`을 통해 스프링 빈에 등록해야 한다.
+
+
 </div>
 </details>
 
