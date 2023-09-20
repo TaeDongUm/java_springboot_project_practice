@@ -1983,6 +1983,163 @@ public class MemberController {
 <summary>5. 회원관리 예제 - 웹 MVC 개발</summary>
 <div markdown="1">
 
+## 5. 회원관리 예제 - 웹 MVC 개발
+
+##### 5-1 홈 화면 추가하기
+
+- `MemberController`를 통해서 회원을 등록하고 조회하기
+
+1. `controller`폴더에`HomeController` 파일 만들기
+
+- ```java
+  import org.springframework.stereotype.Controller;
+  import org.springframework.web.bind.annotation.GetMapping;
+  
+  @Controller
+  public class HomeController {
+  
+      @GetMapping("/")
+      public String home(){
+          return "home";
+      }
+  }
+  ```
+  
+- `@GetMapping` 부분은 `localhost:8080`에 접속하면 `home()` 이 호출이 되는 것
+  
+
+2. `resouces`안에 `templates`에 `home.html` 파일 만들기
+
+<p align="center"><img src="./images/chap5/5-1.png"></p> <br>
+
+기존에 만들었던 정적 컨텐츠는
+
+<p align="center"><img src="./images/chap5/5-2.png"></p> <br>
+
+- 웹 브라우저로부터 `localhost:8080/hello-static.html` 요청이 들어오면 스프링 컨테이너에서 `hello-static` 과 관련된 컨트롤러를 찾고
+  
+- 없다면
+  
+- `hello-static.html`을 찾도록 되어 있음
+  
+- 즉, 우선 순위는 컨트롤러임
+  
+
+##### 5-2 회원 웹 기능 - 등록
+
+- 회원 등록하는 화면 구성(html)
+  
+- 회원 등록하는 controll 만들기
+  
+
+```java
+@Controller
+public class MemberController {
+    private MemberService memberService;
+
+    @Autowired
+    public MemberController(MemberService memberService){
+        this.memberService = memberService;
+    }
+
+    @GetMapping("/members/new")
+    public String createForm(){
+        return "members/createMemberForm";
+    }
+
+    @PostMapping("/members/new")
+    public String create(MemberForm form){
+      Member member = new Member();
+      member.setName(form.getName());
+
+      memberService.join(member);
+      return "redirect:/";
+    }
+
+}
+```
+
+- `@GetMapping`: HTTP Get Method에 해당하는 단축 표현으로 서버의 리소스를 조회할 때 사용
+  
+- `@PostMapping`: HTTP Post Method에 해당하는 단축 표현으로 서버에 리소스를 등록(저장)할 때 사용
+  
+- `"redirect:/"`를 통해서 `localhost:8080`으로 돌아감
+  
+- 회원 등록 form 만들기
+  
+
+```java
+package com.example.hellospring.controller;
+
+public class MemberForm {
+
+    private String name;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+}
+```
+
+- `private String name;`에서 `name`과 `createMemberForm.html`에서의 `name = name`이 매칭된다.
+  
+- 매칭이 되면 값이 들어오게 된다.
+  
+
+```html
+<!DOCTYPE html>
+<html xmlns: th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div>
+    <form action="/members/new" method="post">
+        <div class = "form-group">
+            <label for="name">이름</label>
+            <input type="text" id="name" name="name" placeholder="이름을 입력하세요">
+
+        </div>
+        <button type = "submit">등록</button>
+    </form>
+
+</div>
+
+</body>
+</html>
+```
+
+- 위에서 등록 버튼을 누르게 되면 post 방식으로 input 값들을 보내게 되고
+  
+- url을 엔터치면 기본적으로 `@GetMapping`인데
+  
+- post 방식으로 보낸 것이기 때문에`@PostMapping`의 `public String create(MemberForm form)`가 호출된다.
+  
+- `MemberForm`에 저장되게 된다.
+  
+
+```java
+package com.example.hellospring.controller;
+
+public class MemberForm {
+
+    private String name;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+}
+```
+
 </div>
 </details>
 
