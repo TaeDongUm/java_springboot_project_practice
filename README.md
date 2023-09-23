@@ -1667,6 +1667,8 @@ public void beforeEach(){
 <summary>4. 스프링 빈과 의존관계</summary>
 <div markdown="1">
 
+## 4. 스프링 빈과 의존관계
+
 - 화면에 사용자가 볼 수 있게끔 하려고 함
   
 - `MemberController`가 `MemberService`를 통해서 회원가입 및 데이터를 조회하게 되는데 이를 의존 관계에 있다고 한다.
