@@ -2191,7 +2191,13 @@ public class MemberForm {
 </html>
 ```
 
-- 서버를 실행해본다.
+- 서버를 실행해본다. <br>
+
+<p align="center"><img src="./images/chap5/5-3.png"></p> <br>
+
+- `thymeleaf`문법을 통해서 `th:each`를 수행하게 된다.
+  
+- 넘겨 받은 list를 `for문` 돌 듯 list의 요소에 접근하며 페이지상에 나타낸다.
 
 
 
