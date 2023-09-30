@@ -2142,6 +2142,57 @@ public class MemberForm {
 }
 ```
 
+##### 5-3 회원 웹 기능 - 조회
+
+- 아래 코드를 추가한다.
+  
+
+```java
+// MemberController.java
+
+    @GetMapping
+    public String list(Model model){
+        List<Member> members = memberService.findMembers();
+        model.addAttribute("members", members);
+        return "members/memberList";
+    }
+```
+
+- 그럼, `memberList.html`을 만들고
+  
+
+```html
+<!-- memberList.html -->
+
+<!DOCTYPE html>
+<html xmlns: xmlns:th="http://www.w3.org/1999/xhtml" th="http://www.thymeleaf.org">
+
+<body>
+<div>
+    <table>
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>이름</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="member : ${members}">
+                <td th:text="${member.id}"></td>
+                <td th:text="${member.name}"></td>
+            </tr>
+        </tbody>
+    </table>
+
+</div>
+</body>
+</html>
+```
+
+- 서버를 실행해본다.
+
+
+
 </div>
 </details>
 
