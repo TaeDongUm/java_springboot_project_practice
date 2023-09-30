@@ -1664,7 +1664,7 @@ public void beforeEach(){
 </details>
 
 <details>
-<summary>4. 스프링 빈과 의존관계</summary>
+<summary>4. 스프링 빈과 의존관계 (정리 완) </summary>
 <div markdown="1">
 
 ## 4. 스프링 빈과 의존관계
@@ -1982,7 +1982,7 @@ public class MemberController {
 </details>
 
 <details>
-<summary>5. 회원관리 예제 - 웹 MVC 개발</summary>
+<summary>5. 회원관리 예제 - 웹 MVC 개발 (정리 완) </summary>
 <div markdown="1">
 
 ## 5. 회원관리 예제 - 웹 MVC 개발
