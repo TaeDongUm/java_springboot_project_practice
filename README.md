@@ -2025,6 +2025,8 @@ public class MemberController {
 - `hello-static.html`을 찾도록 되어 있음
   
 - 즉, 우선 순위는 컨트롤러임
+
+- 그렇기 때문에 기존에 만들었던 `index.html`의 우선순위가 밀려서 `home.html`가 실행되는 것임. <br>
   
 
 ##### 5-2 회원 웹 기능 - 등록
