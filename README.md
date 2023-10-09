@@ -2205,8 +2205,37 @@ public class MemberForm {
 </details>
 
 <details>
-<summary>6. 스프링 DB 접근 기술</summary>
+<summary>6. 스프링 DB 접근 기술 (진행 중)</summary>
 <div markdown="1">
+
+JPA란(간단한 정리)
+
+- 기존 기술로는 sql을 개발자들이 직접 짜고 db에 직접 저장했음.
+  
+- JPA란, sql을 개발자들이 짜는 것이 아니라 JPA라는 기술이 db에 등록, 수정, 삭제, 조회 쿼리를 다 날려줌.
+  
+- JPA를 이용하면 객체를 쿼리없이 db에 저장 및 관리를 할 수 있음.
+  
+  - 스프링 데이터 JPA는 JPA를 좀 더 편리하게 쓸 수 있도록 개선한 것.
+
+##### DB 사용
+
+- 실무에서는 보통 mysql이나 oracle 계열의 db를 많이 쓴다.
+  
+- 교육용으로는 h2가 좋다
+  
+  - 용량도 적고, admin 화면도 제공함.
+    
+  - 개발용 로컬 DB로 사용하기 좋은 데이터베이스
+    
+
+##### h2
+
+- https://www.h2database.com/html/main.html 에서 zip 파일 다운 뒤 압출 풀기
+  
+- 해당 폴더 내의 bin 폴더에 들어가서 h2 (window 배치 파일) 실행하기
+
+<p align="center"><img src="./images/chap6/6-1.png"></p> <br>
 
 </div>
 </details>
