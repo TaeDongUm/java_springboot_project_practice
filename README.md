@@ -2206,8 +2206,11 @@ public class MemberForm {
 
 <details>
 <summary>6. 스프링 DB 접근 기술 (진행 중)</summary>
+  
 <div markdown="1">
-
+  
+### 6. 스프링 DB 접근 기술 <br>
+  
 JPA란(간단한 정리)
 
 - 기존 기술로는 sql을 개발자들이 직접 짜고 db에 직접 저장했음.
