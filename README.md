@@ -2240,6 +2240,59 @@ JPA란(간단한 정리)
 
 <p align="center"><img src="./images/chap6/6-1.png"></p> <br>
 
+- 만약, 파일을 실행해도 안되면 IP 부분만 `localhost`로 바꾸고 엔터친다.(뒤 부분은 세션키 등이 포함되어있기 떄문에 건드리지 말 것.)
+  
+- `연결`을 누르면 db가 생성
+
+<p align="center"><img src="./images/chap6/6-2.png"></p> <br>
+
+- sql문 작성하고 실행하면 왼쪽처럼 테이블이 만들어짐
+
+<p align="center"><img src="./images/chap6/6-3.png"></p> <br>
+
+##### 6-2. 순수 JDBC
+
+##### 6-2-1. 환경 설정
+
+- `build.gradle` 파일에 jdbc, 데이터베이스 관련 라이브러리를 추가해야 함
+  
+
+```
+implementation 'org.springframework.boot:spring-boot-starter-jdbc'
+runtimeOnly 'com.h2database:h2'
+```
+
+```
+// build.gradle
+// ~생략
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.boot:spring-boot-starter-jdbc'
+	runtimeOnly 'com.h2database:h2'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}
+```
+
+- Java는 JDBC와 연동하려면 꼭 JDBC Driver가 있어야 함
+  
+  - `implementation 'org.springframework.boot:spring-boot-starter-jdbc'`
+    
+- DB와 연동할 때 데이터베이스가 제공하는 클라이언트가 필요하다.
+  
+  - `runtimeOnly 'com.h2database:h2`
+    
+- 위 2개의 라이브러리를 추가한다.
+  
+- DB와 연동하려면 접속 정보 등 여러가지 설정이 필요하다.
+  
+- 옛날에는 일일이 설정해야 했지만 `spring boot` 가 대부분을 알아서 다 해줌
+  
+  - 그래서 경로만 넣어주면 된다.
+ 
+
+
 </div>
 </details>
 
