@@ -2291,6 +2291,69 @@ dependencies {
   
   - 그래서 경로만 넣어주면 된다.
  
+- `application.properties` 파일에 아래 코드 추가하기
+  
+
+```java
+// application.properties
+spring.datasource.url=jdbc:h2:tcp://localhost/~/test
+spring.datasource.driver-class-name=org.h2.Driver
+spring.datasource.username=sa
+```
+
+- 다운 받은 H2 파일에서 h2.bat(windows 배치 파일) 실행시킨다.
+  
+- `localhost:8080`에서 회원가입 버튼 누른 후 아이디 등록해보기
+
+<p align="center"><img src="./images/chap6/6-4.png"></p> <br>
+
+- 회원 목록 버튼 눌러서 확인해보면
+
+<p align="center"><img src="./images/chap6/6-5.png"></p> <br>
+
+- 제대로 들어와 있음
+  
+- h2 db에서도 값이 확인 가능
+
+<p align="center"><img src="./images/chap6/6-6.png"></p> <br>
+
+- Spring을 왜 쓰냐?
+
+- `interface`를 두고 구현체를 바꿔끼는 것, 소위 `다형성을 활용한다` 라고 하는데
+  
+- 이를 편리하게 해주는 것, 지원해주는 것이 `spring container`
+  
+  - Dependency Injection을 통해서 편리하게 해줌
+    
+- 만약 `MemberService`에 DB를 연결하기 위해서 `JdbcMemberRepository`를 의존하게 만들어버리면, 유지보수가 어려워짐.
+  
+  - 실제 서비스를 운영하다보면 `Service`는 `MemberService` 만 있는 것이 아닐 것이므로 `JdbcMemberRepository`를 추가하려면 다 일일이 추가해야 함. 수정하려면 일일이 수정해야 함
+    
+- 기존의 코드는 손대지 않고 어플리케이션을 설정하는 코드(Asembly)만 수정하게 하면 실제 어플리케이션 코드는 손댈 것이 없다.
+  
+  ```java
+  // ~~~~~~~~~~~~~생
+  // SpringConfig.java
+  @Configuration
+  public class SpringConfig {
+      private final DataSource dataSource;
+  
+      public SpringConfig(DataSource dataSource) {
+          this.dataSource = dataSource;
+      }
+  
+      @Bean
+      public MemberService memberService() {
+          return new MemberService(memberRepository());
+      }
+  
+      @Bean
+      public MemberRepository memberRepository() {
+  // return new MemoryMemberRepository();
+          return new JdbcMemberRepository(dataSource);
+      }
+  }
+  ```
 
 
 </div>
