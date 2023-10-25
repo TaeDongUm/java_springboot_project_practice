@@ -2332,7 +2332,7 @@ spring.datasource.username=sa
 - 기존의 코드는 손대지 않고 어플리케이션을 설정하는 코드(Asembly)만 수정하게 하면 실제 어플리케이션 코드는 손댈 것이 없다.
   
   ```java
-  // ~~~~~~~~~~~~~생
+  // ~~~~~~~~~~~~~생략
   // SpringConfig.java
   @Configuration
   public class SpringConfig {
