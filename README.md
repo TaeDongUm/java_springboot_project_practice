@@ -2355,6 +2355,21 @@ spring.datasource.username=sa
   }
   ```
 
+<p align="center"><img src="./images/chap6/6-7.png"></p> <br>
+
+- `MemberService`는 `MemberRepository`에 의존하고 있다.
+  
+- `MemberRepository`의 구현체로 `MemoryMemberRepository`와 `JdbcMemberRepository`가 있다.
+
+<p align="center"><img src="./images/chap6/6-8.png"></p> <br>
+
+- 기존에는 `<memory>`버전의 `memberRepository`를 `spring bean`으로 등록헀다면, 이를 빼고 `<jdbc>` 버전의 `memberRepository`로 갈아끼웠음.
+  
+- 즉, 다형성을 잘 이용한다면 어플리케이션 전체의 기능을 변경할 필요가 없다.
+
+##### 6-3. 스프링 통합 테스트
+
+
 
 </div>
 </details>
