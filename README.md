@@ -2420,6 +2420,20 @@ class MemberServiceIntegrationTest {
 
 ```
 
+- DB에서 값을 저장하는 단계
+  
+  - sql문 실행하고 commit() 하면 DB에 저장이 됨.
+    
+  - 테스트를 진행한 것이기 때문에 저장한 테스트 값을 지워야 함.
+    
+  - rollback()을 통해서 진행함.
+    
+  - DB에 데이터가 남지 않으므로 다음 테스트가 진행이 가능함.
+    
+- 이 모든 단계를 알아서 해주는 어노테이션이 `@Transactional`
+
+
+
 </div>
 </details>
 
