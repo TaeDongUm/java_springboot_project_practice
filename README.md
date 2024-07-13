@@ -2420,17 +2420,172 @@ class MemberServiceIntegrationTest {
 
 ```
 
-- DB에서 값을 저장하는 단계
+- DB에 값을 저장하는 단계
   
   - sql문 실행하고 commit() 하면 DB에 저장이 됨.
     
+    - commit() 하기 전까지 DB에 반영 안됨.
+      
   - 테스트를 진행한 것이기 때문에 저장한 테스트 값을 지워야 함.
     
   - rollback()을 통해서 진행함.
     
   - DB에 데이터가 남지 않으므로 다음 테스트가 진행이 가능함.
     
-- 이 모든 단계를 알아서 해주는 어노테이션이 `@Transactional`
+  - **그럼, 테스트를 하고 commit()하지 않고 rollback()을 하면 되겠네?**
+    
+    - `@Transactional`
+      
+- 따로 DB값을 지우는 로직을 설계하지 않았다면 테스트를 위해 DB에 넣은 값이 계속 존재
+  
+  - 다음 테스트시 오류 발생 (반복 테스트를 못함)
+    
+  - ```java
+    @AfterEach
+    public void afterEach(){
+        memberRepository.deleteAll();
+    }
+    ```
+    
+  - 이것도 가능하지만 굳이 그럴 필요없이 어노테이션 쓰면 됨.
+    
+
+- 다음 테스트를 위해 DB 값을 지우는 단계를 알아서 해주는 어노테이션이 `@Transactional`
+  
+- `@Transactional` 을 테스트 케이스에 달면 트랜잭션을 먼저 실행하고 그 다음에 DB에 데이터를 insert 쿼리를 하고 난 후 테스트가 끝나면 롤백을 해준다.
+  
+- DB에 넣었던 데이터가 반영이 안되고 다 지워진다.
+  
+  - 다음 테스트 반복 가능
+    
+
+##### 6-4. 스프링 JdbcTemplate
+
+- 스프링 JdbcTemplate과 Mybatis 같은 라이브러리는 JDBC API에서 본 반복 코드를 대부분 제거해준다. 하지만, SQL은 직접 작성해야 한다.
+  
+
+```java
+package hello.hellospring.repository;
+
+import hello.hellospring.domain.Member;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
+import javax.sql.DataSource;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
+public class JdbcTemplateMemberRepository implements MemberRepository {
+
+    private final JdbcTemplate jdbcTemplate;
+
+    public JdbcTemplateMemberRepository(DataSource dataSource) {
+        jdbcTemplate = new JdbcTemplate(dataSource);
+    }
+
+    @Override
+    public Member save(Member member) {
+        SimpleJdbcInsert jdbcInsert = new SimpleJdbcInsert(jdbcTemplate);
+        jdbcInsert.withTableName("member").usingGeneratedKeyColumns("id");
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("name", member.getName());
+        Number key = jdbcInsert.executeAndReturnKey(new
+                MapSqlParameterSource(parameters));
+        member.setId(key.longValue());
+        return member;
+    }
+
+    // jdbcTemplate 라이브러리를 쓰면 단 2줄이면 코드 작성이 끝난다.
+    @Override
+    public Optional<Member> findById(Long id) {
+        List<Member> result = jdbcTemplate.query("select * from member where id
+                = ?", memberRowMapper(), id);
+        return result.stream().findAny();
+    }// 아래 코드와 비교해보면
+
+    /*  jdbcTemplate을 쓰지 않는다면? Jdbc 코드와 비교
+    @Override
+    public Optional<Member> findById(Long id) {
+
+        String sql = "select * from member where id = ?";
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+
+        try {
+            conn  = getConnection();
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setLong(1, id);
+            rs = pstmt.executeQuery();
+            if(rs.next()) {
+                Member member = new Member();
+                member.setId(rs.getLong("id"));
+                member.setName(rs.getString("name"));
+                return Optional.of(member);
+            }else {
+                return Optional.empty();
+            }
+        }catch (Exception e) {
+            throw new IllegalStateException(e);
+        }finally {
+            close(conn, pstmt, rs);
+        }
+    }
+    */
+
+    @Override
+    public List<Member> findAll() {
+        return jdbcTemplate.query("select * from member", memberRowMapper());
+    }
+     
+
+    @Override
+    public Optional<Member> findByName(String name) {
+        List<Member> result = jdbcTemplate.query("select * from member where
+                name = ?", memberRowMapper(), name);
+        return result.stream().findAny();
+    }
+    private RowMapper<Member> memberRowMapper() {
+        return (rs, rowNum) -> {
+            Member member = new Member();
+            member.setId(rs.getLong("id"));
+            member.setName(rs.getString("name"));
+            return member;
+        };
+    }
+    // 아래 코드를 람다로 바꾼 표현
+//    private RowMapper<Member> memberRowMapper(){
+//        return new RowMapper<Member>(){
+//            @Override
+//            public Member mapRow(ResultSet rs, int rowNum) throws SQLException{
+//                Member member = new Member();
+//                member.setId(rs.getLong("id");
+//                member.setName(rs.getString("name");
+//                return member;
+//            }
+//        }
+//    }
+}
+
+```
+
+- `SpringConfig.java` 에 이전에 만들었던 `JdbcMemberRepository`를 주석처리하고 새로 만든 `JdbcTemplateMemberRepository`를 넣어주면 됨.
+  
+  - `JdbcTemplate`을 이용하면서 반복적으로 개발해야 하는 부분이 줄어듦.
+    
+
+##### 6-5. JPA
+
+- JPA는 반복 코드뿐만아니라 기본적인 SQL도 JPA가 직접 만들어서 실행해준다.
+  
+  - DB에 쿼리 날리고 데이터 가져오는 것을 직접 해줌.
+    
+- SQL과 데이터 중심 설계에서 객체 중심 설계로 전환할 수 있다.
 
 
 
