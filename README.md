@@ -2879,7 +2879,7 @@ public class JpaMemberRepository implements MemberRepository {
 
 ##### 7-2. AOP 적용
 
-![](file://C:\Users\etd93\AppData\Roaming\marktext\images\2024-10-10-20-39-51-image.png?msec=1728560391428)
+<p align="center"><img src="./images/chap7/7-1.png"></p>
 
 - 핵심 로직과 공통 관심 사항을 분리한다.
   
@@ -2920,14 +2920,14 @@ public class JpaMemberRepository implements MemberRepository {
 
 ###### AOP 적용 전
 
-![](file://C:\Users\etd93\AppData\Roaming\marktext\images\2024-10-10-20-52-07-image.png?msec=1728561127355)
+<p align="center"><img src="./images/chap7/7-2.png"></p>
 
 - 기존 스프링이 동작하는 원리는 위처럼 `memberController`에서 메서드를 호출하면 `memberService` 의 메서드가 호출이 될 것임.
   
 
 ###### AOP 적용 후
 
-![](file://C:\Users\etd93\AppData\Roaming\marktext\images\2024-10-10-20-54-20-image.png?msec=1728561260133)
+<p align="center"><img src="./images/chap7/7-3.png"></p>
 
 - proxy 기술로 가짜 컨트롤러, 서비스, 레포지토리가 만들어진다.
   
