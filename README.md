@@ -2823,7 +2823,115 @@ public class JpaMemberRepository implements MemberRepository {
 <details>
 <summary>7. AOP</summary>
 <div markdown="1">
+7. AOP
 
+##### 7-1. AOP(Aspect Oriented Programming)가 필요한 상황
+
+- 예를 들어, 메서드의 시작과 끝의 시간을 측정하고 싶다면? (1000개의 메서드가 있다고 가정)
+  
+- ```java
+  package hello.hellospring.service;
+  @Transactional
+  public class MemberService {
+      /**
+       *
+       회원가입
+       */
+      public Long join(Member member) {
+          long start = System.currentTimeMillis();
+          try {
+              validateDuplicateMember(member); //중복 회원 검증
+              memberRepository.save(member);
+              return member.getId();
+          }
+          finally {
+              long finish = System.currentTimeMillis();
+              long timeMs = finish - start;
+              System.out.println("join " + timeMs + "ms");
+          }
+      }
+      /**
+       *
+       전체 회원 조회
+       */
+      public List<Member> findMembers() {
+          long start = System.currentTimeMillis();
+          try {
+              return memberRepository.findAll();
+          }
+          finally {
+              long finish = System.currentTimeMillis();
+              long timeMs = finish - start;
+              System.out.println("findMembers " + timeMs + "ms");
+          }
+      }
+  }
+  ```
+  
+- 위 처럼 일일이 시간 측정하는 로직을 넣어야 한다.
+  
+- 문제는 try문의 `핵심 로직`과 finally 문의 `공통 사항 로직`이 섞여서 유지보수가 어렵다.
+  
+  - 1000개 메서드에 ms 단위로 적용했는데, 상사 지시사항으로 s 단위로 바꾸라고 한다면? 일일이 바꿔야 하는 상황 발생!
+    
+- 하지만, 공통 사항 로직을 별도의 로직으로 만들기 어렵다.
+  
+
+##### 7-2. AOP 적용
+
+![](file://C:\Users\etd93\AppData\Roaming\marktext\images\2024-10-10-20-39-51-image.png?msec=1728560391428)
+
+- 핵심 로직과 공통 관심 사항을 분리한다.
+  
+- `TimeTraceAop`라는 로직을 따로 만들어서 원하는 곳에 적용하면 된다.
+  
+- ```java
+  package hello.hellospring.aop;
+  import org.aspectj.lang.ProceedingJoinPoint;
+  import org.aspectj.lang.annotation.Around;
+  import org.aspectj.lang.annotation.Aspect;
+  import org.springframework.stereotype.Component;
+  @Component
+  @Aspect
+  public class TimeTraceAop {
+      @Around("execution(* hello.hellospring..*(..))")
+      public Object execute(ProceedingJoinPoint joinPoint) throws Throwable {
+          long start = System.currentTimeMillis();
+          System.out.println("START: " + joinPoint.toString());
+          try {
+              return joinPoint.proceed();
+          }
+          finally {
+              long finish = System.currentTimeMillis();
+              long timeMs = finish - start;
+              System.out.println("END: " + joinPoint.toString()+ " " + timeMs + "ms");
+          }
+      }
+  
+  }
+  ```
+  
+- 보통은 패키지별로 적용하는데
+  
+- 서비스에만 적용하고 싶다면 `hello.hellospring.service..*(..))`로 설정하면 된다.
+  
+  - `@Around ` 어노테이션 관련해서 따로 찾아보면서 공부하면 된다.
+    
+
+###### AOP 적용 전
+
+![](file://C:\Users\etd93\AppData\Roaming\marktext\images\2024-10-10-20-52-07-image.png?msec=1728561127355)
+
+- 기존 스프링이 동작하는 원리는 위처럼 `memberController`에서 메서드를 호출하면 `memberService` 의 메서드가 호출이 될 것임.
+  
+
+###### AOP 적용 후
+
+![](file://C:\Users\etd93\AppData\Roaming\marktext\images\2024-10-10-20-54-20-image.png?msec=1728561260133)
+
+- proxy 기술로 가짜 컨트롤러, 서비스, 레포지토리가 만들어진다.
+  
+- AOP가 실행이 되고 `joinPoint.proceed()`하면 그 때 진짜 컨트롤러, 서비스, 레포지토리가 호출이 된다.
 </div>
 </details>
   
