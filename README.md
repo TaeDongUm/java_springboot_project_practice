@@ -2587,7 +2587,235 @@ public class JdbcTemplateMemberRepository implements MemberRepository {
     
 - SQL과 데이터 중심 설계에서 객체 중심 설계로 전환할 수 있다.
 
+1. 의존성 추가
 
+```java
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    // implementation 'org.springframework.boot:spring-boot-starter-jdbc'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    runtimeOnly 'com.h2database:h2'
+    testImplementation('org.springframework.boot:spring-boot-starter-test') {
+        exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+    }
+}
+```
+
+- 기존의 의존성인 `implementation 'org.springframework.boot:spring-boot-starter-jdbc'`를 주석 처리하고
+  
+- `implementation 'org.springframework.boot:spring-boot-starter-data-jpa'`를 추가해준다.
+  
+  - JPA 및 JDBC도 포함하는 의존성이다.
+
+###### 2. application.properties 파일에 추가할 내용
+
+```java
+spring.datasource.url=jdbc:h2:tcp://localhost/~/test
+spring.datasource.driver-class-name=org.h2.Driver
+spring.datasource.username=sa
+spring.jpa.show-sql=true
+spring.jpa.hibernate.ddl-auto=none
+```
+
+- `spring.jpa.show-sql=true`
+  
+  - Jpa가 생성하는 sql을 출력하게 해준다.
+- `spring.jpa.hibernate.ddl-auto=none`
+  
+  - 작성된 객체를 보고 자동으로 데이터베이스 테이블까지 만들어준다.
+    
+  - 여기서는 `none` 으로 설정했는데, 강사님이 기존에 만들어둔 테이블을 쓰기 위함이다.
+    
+  - `create`를 사용하면 엔티티 정보를 바탕으로 테이블을 자동으로 만들어준다.
+    
+- `spring.datasource.username=sa`
+  
+  - 스프링부트 2.4부터 위 설정을 꼭 추가해야 한다. 그렇지 않으면 오류 발생!
+- 확인할 사항들
+  
+  - build.gradle에서
+    
+    - plugins는 springframework와 dependency, 그리고 java를 포함하는지 확인
+      
+    - springboot 버전과 gradle간의 호환성 확인
+      
+      - Springboot 2.6은 Gradle 8.x 지원 안함
+        
+      - Gradle 6.8, 6.9, or 7.x 지원함
+        
+      - Gradle 8.x는 Springboot 2.7부터 지원함
+        
+      - Springboot 2.6을 쓰고 싶다면 downgrade하거나 springboot 버전을 높이거나 선택해야 한다.
+        
+  - 아래 그림처럼 jpa와 hibernate가 External Libraries에 포함되어있는지 확인
+    
+    <p align="center"><img src="./images/chap6/6-9.png"></p> <br>
+    
+- Jpa는 인터페이스이다.
+  
+- 그 구현체로 hibernate 등이 쓰인다.
+  
+  - 자바 진영의 표준 인터페이스이며, 구현은 여러 업체들이 하는 것.
+    
+  - 업체마다 성능이 좋거나 쓰기 편하거나 할 수 있다.
+    
+  - 현재는 hibernate를 자주 쓴다.
+    
+- Jpa는 객체와 ORM(Object Relational Mapping)이라는 기술이다.
+  
+  - 객체와 Relational 데이터베이스의 테이블을 매핑하는 기술
+
+###### 3. SpringBoot가 자동으로 EntityManager를 생성해준다.
+
+```java
+implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+```
+
+- 의존성에 위 라이브러리를 추가하면 SpringBoot에서 자동으로 `EntityManager`를 생성하게끔 한다.
+- 데이터베이스와 연결까지 해줌
+
+```java
+package hello.hellospring.repository;
+import hello.hellospring.domain.Member;
+import javax.persistence.EntityManager;
+import java.util.List;
+import java.util.Optional;
+
+public class JpaMemberRepository implements MemberRepository {
+    private final EntityManager em;
+
+    public JpaMemberRepository(EntityManager em) {
+        this.em = em;
+    }
+
+    public Member save(Member member) {
+        em.persist(member);
+        return member;
+    }
+
+    public Optional<Member> findById(Long id) {
+        Member member = em.find(Member.class, id);
+        return Optional.ofNullable(member);
+    }
+
+    public List<Member> findAll() {
+        return em.createQuery("select m from Member m", Member.class)
+                .getResultList();
+    }
+```
+
+- 이걸 인젝션 받으면 된다.
+  
+- ```java
+   public Member save(Member member) {
+       em.persist(member);
+       return member;
+   }
+  ```
+  
+- `persist`영속으로 저장하는 것
+  
+- `Member`를 저장하는데 INSERT 쿼리 작성해서 DB에 집어넣고 `id`까지 설정 다해준다.
+  
+- ```java
+      public List<Member> findAll() {
+          List<Member> result = em.createQuery("select m from Member m", Member.class)
+                  .getResultList();
+          return result;
+      }
+  ```
+  
+- 보통 테이블을 대상으로 Sql 쿼리문을 날리는데 엔티티(객체)를 대상으로 쿼리를 날리는 것.
+  
+- 그럼 자동으로 sql로 번역이 된다.
+  
+- 기존이었으면 `select *, m.name, m.id from 테이블 m`처럼 별이나 name이나 id로 조회했어야 하는데 `select m from Member m` 객체 자체를 `select` 한다.
+  
+- ```java
+  @Override
+  public Optional<Member> findByName(String name) {
+      List<Member> result  = em.createQuery("select m from Member m where m.name = :name", Member.class)
+              .setParameter("name", name)
+              .getResultList();
+      return result.stream().findAny();
+  }  
+  ```
+  
+- `findByName`이나 `findAll` 처럼 여러개의 리스트를 result로 받는 건 Jpa 쿼리를 작성해야 한다.
+  
+- 이것 또한 `Spring Data JPA` 라이브러리를 받으면 작성하지 않아도 된다.
+  
+- 또한, 저장하고 변경하는 작업을 할 때는 트랜잭션을 붙여야 한다.
+  
+
+##### 6-6. Spring Data JPA
+
+- `Repository`에 구현 클래스 없이 인터페이스만으로 개발을 완료할 수 있다.
+  
+- 반복 개발해온 기본 CRUD 기능도 Spring Data JPA가 제공한다.
+  
+- 단순 반복된 개발 코드를 확연하게 줄여서 핵심 비즈니스 로직을 개발하는데 집중할 수 있다.
+  
+- Spring Data JPA는 JPA를 편리하게 도와주는 도구일 뿐
+  
+- 우선적으로 JPA를 배우는 것이 중요, 그렇지 않으면 실제 운영에서 만나는 여러 문제들을 해결하기 어려울 것.
+  
+- ```java
+  public interface SpringDataJpaMemberRepository extends JpaRepository<Member, Long>, MemberRepository{
+      @Override
+      Optional<Member> findByName(String name);
+  }
+  ```
+  
+- `Interface`인 `SpringDataJpaMemberRepository`가 `JpaRepository`를 받고 있다면 구현체를 만들어서 자동으로 스프링 빈에 등록한다.
+  
+- ```java
+  @Configuration
+  public class SpringConfig {
+      private final MemberRepository memberRepository;
+  
+      @Autowired
+      public SpringConfig(MemberRepository memberRepository) {
+          this.memberRepository = memberRepository;
+      }
+      @Bean
+      public MemberService memberService() {
+          return new MemberService(memberRepository);
+      }
+      @Bean
+      public MemberRepository memberRepository(){
+  
+      }
+  
+  }
+  ```
+  
+- 스프링 컨테이너가 `MemberRepository`를 찾을 것
+  
+- 하지만, `MemberRepository`를 스프링 컨테이너에 빈으로 등록하지 않아도
+  
+- 스프링 데이터 JPA가 제공하는 `JpaRepository`를 extends 하면 스프링 데이터 JPA가 인터페이스에 대한 구현체를 자동으로 만들어내고 스프링 빈에 등록을 한다.
+  
+- 그래서, 우리는 위 코드처럼 인젝션 받을 수 있다.
+  
+- 그럼, 기본적인 CRUD 기능은 구현하지 않아도 되나? YES
+  
+- 스프링 데이터 JPA가 만든 인터페이스 PagingAndSortingReposiory 와 CrudRepository에서 제공한다.
+  
+- <p align="center"><img src="./images/chap6/6-10.png"></p> <br>
+  
+- 공통 인터페이스로써 제공하는 위 기능들 외에 username이나 email 이름 등등으로 조회하고 싶다면 `findByName()`, `findByEmail()` 처럼 메서드 이름 만으로 조회 기능 제공한다.
+  
+- 복잡한 동적 쿼리의 경우 Querydsl 이라는 라이브러리를 사용하면 되고 이 조합으로도 어렵다면 JPA가 제공하는 네이티브 쿼리를 사용하거나 JdbcTemplate를 사용하면 된다.
+  
+- 요약하자면 스프링 데이터 JPA 제공 기능으로는
+  
+  - 인터페이스를 통한 기본적인 CRUD
+    
+  - `findByName()` , `findByEmail()`
+    
+  - 페이징 기능 자동 제공
 
 </div>
 </details>
